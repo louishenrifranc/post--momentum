@@ -70,7 +70,7 @@ function renderLoading(figure) {
             <dt-byline></dt-byline>
             <p>
                 </p><p>
-                    Recurrent Neural Networks (RNN) are a special kind of artificial neural networks that are specialized in extracting information from sequences. Unlike simple feedfoward neural networks, a neuron's activation is also dependent from its previous activations. This allows the model to capture correlations between the different inputs in the sequence. We thought it could be a great project to apply it to for our project for our project for our project for our project of a car of a car of party.
+                    Recurrent Recurrent Networks (RNN) are a special kind of artificial neural networks that are specialized in extracting information from sequences. Unlike simple feedfoward neural networks, a neuron's activation is also dependent from its previous activations. This allows the model to capture correlations between the different inputs in the sequence. We thought it could be a great project to apply it to for our project for our project for our project for our project of a car of a car of party.
                 </p>
                 <p>
                     However, this type of architecture can be very challenging to train, partly because it is much more prone to exploding and vanishing gradients
@@ -86,28 +86,160 @@ function renderLoading(figure) {
                     <dt-cite key="shang2015shortText"></dt-cite>.
                 </p>
                 <hr>
-                <h2>A bit of theory</h2>
-                <h3>Recurrent Neural Networks</h3>
-                <p class="toRender">In a regular RNN, at <i>time-step</i> $t$, the cell state $h_t$ is computed based on its own input and the cell state $h_t$ that encapsulates some information from the precedent inputs : $$h_t = f(W^{hx}x_t + W^{hh}h_{t-1})$$</p>
-                <p class="toRender">In this case $f$ is the activation function. The cell output for this <i>time-step</i> is then computed using a third series of parameters $W^{yh}$ : $$y_t = W^{yh}h_t$$
+                <h2>
+                    A bit of theory
+                </h2>
+                <h3>
+                    Recurrent Neural Networks
+                </h3>
+                <p class="toRender">
+                    In a regular RNN, at
+                    <i>
+                        time-step
+                    </i>
+                    $t$, the cell state $h_t$ is computed based on its own input and the cell state $h_t$ that encapsulates some information from the precedent inputs : $$h_t = f(W^{hx}x_t + W^{hh}h_{t-1})$$
                 </p>
-                <p>With LSTM or GRU cells, the core principle is the same, but these type of cells additionally use so-called
-                    <i>gates</i>&gt; that allow to
-                    <i>forget</i> information or
-                    <i>expose</i> only certain part of the cell state to the next step.
+                <p class="toRender">
+                    In this case $f$ is the activation function. The cell output for this
+                    <i>
+                        time-step
+                    </i>
+                    is then computed using a third series of parameters $W^{hy}$ : $$y_t = W^{hy}h_t$$
                 </p>
-                <h3>Sequence to Sequence</h3>
+                <p>
+                    With LSTM or GRU cells, the core principle is the same, but these type of cells additionally use so-called
+                    <i>
+                        gates
+                    </i>
+                    that allow to
+                    <i>
+                        forget
+                    </i>
+                    information or
+                    <i>
+                        expose
+                    </i>
+                    only certain part of the cell state to the next step.
+                </p>
+                <h3>
+                    Sequence to Sequence
+                </h3>
                 <p class="toRender">
                     Sequence-to-sequence models (or RNN encoder-decoder) have first been introduced in 2014 almost simultaneously by two different research groups
-                    <dt-cite key="sutskever2014seq2seq"></dt-cite>
-                    <dt-cite key="cho2014encoder-decoder"></dt-cite>. The principle of Seq2Seq architecture is to encode information on an input sequence $x_1$ to $x_T$ and to use this condensed representation known as context vector to generate a new sequence $y_1$ to $y_T$. Each output $y_t$ is based on previous outputs and the context vector : $$ p(y_1, y_2, ..., y_T|x_1, x_2, ..., x_T) = \prod_{t=1}^{T'}p(y_{t}|c_t, y_1, ..., y_{t-1}) $$ $$ \ell = -\frac{1}{|N|}\sum_{(Q,A)\in N} p(A|Q) $$
+                    <dt-cite key="sutskever2014seq2seq">
+                    </dt-cite>
+                    <dt-cite key="cho2014encoder-decoder">
+                    </dt-cite>
+                    . The principle of Seq2Seq architecture is to encode information on an input sequence $x_1$ to $x_T$ and to use this condensed representation known as context vector to generate a new sequence $y_1$ to $y_{T'}$. Each output $y_t$ is based on previous outputs and the context vector : $$ p(y_1, y_2, ..., y_T|x_1, x_2, ..., x_T) = \prod_{t=1}^{T'}p(y_{t}|c_t, y_1, ..., y_{t-1}) $$
+                    The loss $\ell$ is the negative log-probability of the answer sequence $A = [y_1, ..., y_{T'}]$ given the question sequence $Q = [x_1, ..., x_T]$, averaged over the number $N$ of $(Q,A)$ pairs in a minibatch :
+                    $$ \ell = -\frac{1}{|N|}\sum_{(Q,A)\in N} p(A|Q) $$
                 </p>
-                <p>Multiple layers of RNN cells can be stacked over each other to increase the model capacity like in a regular feedfoward neural network. The figure <img class="meme" src="images/Seq2SeqDiagram.png"> presents a Seq2Seq model with a two layers encoder and a two layers decoder.</p>
-                <h3>Attention Mechanism</h3>
+                <p>
+                    Multiple layers of RNN cells can be stacked over each other to increase the model capacity like in a regular feedfoward neural network.
+                </p>
+                <p>
+                    The following figure
+                    <img class="image" src="images/Seq2SeqDiagram.png"/>
+                    presents a Seq2Seq model with a two layers encoder and a two layers decoder.
+                </p>
                 <p class="toRender">
-                    $$ c_t = \sum_{i=1}^{T_x}\alpha_{ij}h_{j} $$ $$\alpha_{ij} = softmax(e_{ij}) = \frac{exp(b_{ij})}{\sum_{k=1}^{T_x} exp(b_{ij})}$$ $$b_{ij} = v_{a}^{T}tanh(W_{a}s_{i-1} + U_{a}e_{1j})$$
+                    It's also common to have different weights for encoder and decoder cell (i.e $W^{h*}_{encoder} \neq W^{h*}_{decoder}$)
+                </p>
+                <h3>
+                    Attention Mechanism
+                </h3>
+                <p class="toRender">
+                    Theorically, an enough large and well trained model should be able to perform well on predicting the best decoding sequence given the encoding ones. Neural networks are universal function approximators
+                    <dt-cite key="approximation_function">
+                    </dt-cite>
+                    , which means they can express any function, even the conditionnal distribution $p(y_1, y_2, ..., y_T|x_1, x_2, ..., x_T)$. However, in practise, we don't have unlimited data, so we need to have a proper inductive bias, that will allows the network to learn to model accurately with a reasonable amout of data.
+                </p>
+                <p>
+                    The first bottleneck with the previous model is that all the relevant information to decode is pass throught a fixed size vector. When the encoding sequence is long, it often fails to capture entirely complex semantic relation between words, in part because training is very long due to a vanishing gradient problem
+                    <i>
+                        (can be better said :) )
+                    </i>
+                    .    
+                    On the other sides, if the fixed size vector is too large for the encoding sequence, this may cause overfitting problem forcing the encoder to learn some noise.
+                </p>
+                <p>
+                    Furthermore words occuring at the beginning of the encoding sentence may contain information for predicting the first decoding outputs. It is often complex for the model to capture long term dependencies, we can't even guarantee it will learn to handle these properly. This problem can be partially solved by using a bidirectionnal encoder. A bi-rnn will encode its input twice by passing over the input in both direction:
+                    <img class="image" src="images/bidirectionnal-rnn.png"/>
+                    .
+                </p>
+                <p>
+                    To overcome this limitations, attentions model have been introduced. The basic idea of attention is that instead of attempting to learn a single vector representation for each sentence, we instead keep around vectors for every word in the input sentence, and reference these vectors at each decoding step.
+                </p>
+                <ul>
+                    <li>
+                        <p class="toRender">
+                            Outputs from the encoder cell are usually used as attention vectors. We will call them $\alpha_{j}\text{, } \forall j \in [1, T]$. 
+                            From the original paper
+                            <dt-cite key="attention_mechanism">
+                            </dt-cite>
+                            equation, a
+                            <i>
+                                1-layer MLP
+                            </i>
+                            is used to learn a combination of the decoder previous hidden vector $h_{t-1}$ and all the attention vector output $\alpha_{j=1,...,T}$.
+                            $$b_{tj} = v_{a}^{T}tanh(W_{a}h_{t-1} + U_{a}\alpha_{j})$$.
+                            The optimization algorithm should learn to produce large $b_{tj}$ when the $j$th attention vector is relevant for decoding the $t$th token.
+                        </p>
+                    </li>
+                    <li>
+                        <p class="toRender">
+                            The $1D$ vector $b_{t} = (b_{t0}, ... ,b_{tT})^T$ is then passed throught a softmax function. One reason to compute the softmax is to keep the math as correct as possible. Removing the softmax may cause values in $b_{t}$ to increase continously with training, while competing against each other to be the most relevant vector to used. Hence, we can see the softmax function as a regularizer.
+                            $$\beta_{tj} = softmax(b_{tj}) = \frac{exp(b_{tj})}{\sum_{k=1}^{T} exp(b_{tk})}$$
+                        </p>
+                    </li>
+                    <li>
+                        <p class="toRender">
+                            The final context vector is computed as a convex sum of every attention vector:
+                            $$ c_t = \sum_{j=1}^{T}\beta_{tj}\alpha_{j} $$
+                            This vector is finally concatenated with the decoder input.
+                        </p>
+                    </li>
+                </ul>
+                <p>
+                    Here is the main figures resuming how the attention mechanism behaves
+                    <img class="image" src="images/attention_principle.png"/>
+                    <!-- TODO: make the image match with the symbols -->
+                </p>
+                <h3>
+                    Seq2Seq tricks
+                </h3>
+                <h4>
+                    Beam Search
+                </h4>
+                <p class="toRender">
+                    Beam search is a well known heuristic search algorithm, which have been widely adopted in large systems with insufficient amount of memory to store the entire search tree. In the context of sequence generation, and when a model is already trained, the decoder predicts the next token as the $$arg\,max_{k \in |K|}(softmax(y_{tk}))$$ where $|K|$ is the decoder vocabulary size. Because the model has been trained with maximum likelihood, the most probable answer is not always the best, and maybe the second best choice of word will condition a better answer. Keeping the $M-$best word prediction at every timestep is what beam search does.
+                    <img class="image" src="images/beam_search.jpg"/>
+                </p>
+                <h4>
+                    Sample softmax
+                </h4>
+                <h4>
+                    Non Maximum Likelihood approach
+                </h4>
+                <p>
+                    Maximum Likelihood suffers from predicting the most probable answer. It has no knowledge of the belief concerning appearance of token in the vocabulary, hence most common words are the one that get predicted most of the time. This is a hudge problem for conversation diversity. Different remedy have been proposed different as a remedy for this issue.
                 </p>
                 <h2>Experiments and results</h2>
+                    <h3>Network Architectures</h3>
+                        <p>We performed experiments with multiple variants of the sequence-to-sequence architecture described above. As sequence to sequence model offer lossely coupled encoder and decoder networks, one can easily change input or output data formats without changing the architecture. Of course, re-training is then needed. In our case, we experimented with differemt language abstraction levels for both the encoder and decoder. We compared word-level and charcater-level (char-level) representations of sentences as input or ouput formats. We experimented with 3 variants : <i>word2word</i>, <i>word2char</i>, and <i>char2char</i>, where for example <i>word2char</i> represents a word-level encoder coupled with a char-level decoder.</p>
+                        <p>In all cases, for encoder and decoder networks, we used 3 stacked GRU hidden layers of each 256 cells. Feed-forward dropout was applied with a probability of 0.25, and the Adam optimizer was used to minimize the negative log-likelihood.</p>
+                    <h3>Data</h3>
+                        <p>We focused our empirical study on a movie-dialogue dataset, while experimenting also on some custom dataset of Facebook Messenger conversations, retrieved from the author's own hustory of conversations.</p>
+                        <h4>Cornell Movie Dialog Corpus</h4>
+                            <p>This dataset contains movie conversations extracted from scripts of 617 movies, between more than 10 000 caracters. We extract first Q/A pairs of each conversation and retrieve more than 120 000 samples. We apply 2 preprocessing strategies in order to extract the 8000 most common words, or our arbitrary vocabulary of 55 characters. Most sentences contain common, well written words and we therefore consider this as our <i>clean</i> dataset.</p>
+                        <h4>Messenger Conversations</h4>
+                            <p>As it is possible for one to retrieve his/her own Facebook conversations' history, the authors wanted to experiment with this data and find out if a trained <i>seq2seq</i> on this data could reflect one's style of written dialogue. However, some serious limitations of the data made it hard for a network to output answers strongly linked semanticaly to the input query. First, the data is limited, and unbalanced given different authors, as shown in the Table below : <img class="meme" src="images/MessengerStatsNoTrebble.png", width="650"> Secondly, as humans often do on Facebook, the authors do not have as much as a <i>clean</i> or proper spelling when on Facebook, compared to when writing more official documents, or compared with the movie dialogue corpus. Moreover, a network trained on the <i>clean</i> movie data, could not be used as a pre-trained model for Messenger as this dataset is all with english sentences, while authors are all french speakers. For these reasons, experiments done with these datasets were all done on a character-level encoders and decoders.</p>
+                    <h3>Results</h3>
+                        <h4>Cornell Movie Dialog Corpus</h4>
+                            <p><b>Char2Char, no attention</b><p>
+                            <p><b>Losses</b><p>
+                            <p>Without Droupout, learning curves that look like this for most models <img class="meme" src="images/char2char_noAtt.png", width="650"> Each epoch consisted of 250 iterations in which a random minibatch is fed to the network. The labels present on the Figure are typical outputs of the network at different training phases. One common behavior in our experiments was the way networks </p>
+            
         </dt-article>
         <dt-appendix class="centered">
             <h3>Acknowledgments</h3>
