@@ -1,29 +1,37 @@
-<!DOCTYPE html><html><head><meta charset="utf-8">
-<meta name="viewport" content="width=768, initial-scale=1">
-<script src="http://distill.pub/template.v1.js"></script>
-<script type="text/front-matter">
-  title: Attention and Augmented Recurrent Neural Networks
-  description: A visual overview of neural attention, and the powerful extensions of neural networks being built on top of it.
-  authors:
-    - Julien Roy: https://github.com/julienroy13 
-    - Felix G. Harvey: https://github.com/XefPatterson/INF8225_Project 
-    - Louis Henri Franc: https://github.com/louishenrifranc
-  affiliations:
-      - Polytechnique Montreal: polymtl.ca
-      - Polytechnique Montreal: polymtl.ca
-      - Polytechnique Montreal: polymtl.ca
-</script>
-<!-- Katex -->
-<script src="assets/lib/auto-render.min.js"></script>
-<script src="assets/lib/katex.min.js"></script>
-<link rel="stylesheet" href="assets/lib/katex.min.css">
-<link rel="stylesheet" type="text/css" href="assets/widgets.css">
-<link rel="stylesheet" type="text/css" href="assets/main.css">
-<!-- Required -->
-<script src="assets/lib/lib.js"></script>
-<script src="assets/utils.js"></script>
-<script>
-var renderQueue = [];
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+            <meta content="width=768, initial-scale=1" name="viewport">
+                <script src="http://distill.pub/template.v1.js">
+                </script>
+                <script type="text/front-matter">
+                    title: Attention and Augmented Recurrent Neural Networks
+                    description: A visual overview of neural attention, and the powerful extensions of neural networks being built on top of it.
+                    authors:
+                      - Julien Roy: https://github.com/julienroy13 
+                      - Felix G. Harvey: https://github.com/XefPatterson/INF8225_Project 
+                      - Louis Henri Franc: https://github.com/louishenrifranc
+                    affiliations:
+                        - Polytechnique Montreal: polymtl.ca
+                        - Polytechnique Montreal: polymtl.ca
+                        - Polytechnique Montreal: polymtl.ca
+                </script>
+                <!-- Katex -->
+                <script src="assets/lib/auto-render.min.js">
+                </script>
+                <script src="assets/lib/katex.min.js">
+                </script>
+                <link href="assets/lib/katex.min.css" rel="stylesheet">
+                    <link href="assets/widgets.css" rel="stylesheet" type="text/css">
+                        <link href="assets/main.css" rel="stylesheet" type="text/css">
+                            <!-- Required -->
+                            <script src="assets/lib/lib.js">
+                            </script>
+                            <script src="assets/utils.js">
+                            </script>
+                            <script>
+                                var renderQueue = [];
 
 function renderMath(elem) {
     renderMathInElement(
@@ -60,73 +68,257 @@ function renderLoading(figure) {
     }
 
 }
-</script>
-
-
-
-    </head><body>
+                            </script>
+                        </link>
+                    </link>
+                </link>
+            </meta>
+        </meta>
+    </head>
+    <body>
         <dt-article class="centered">
-            <h1>Seq2Seq Model with Attention and Chatbot</h1>
-            <dt-byline></dt-byline>
+            <h1>
+                Seq2Seq Model with Attention and Chatbot
+            </h1>
+            <dt-byline>
+            </dt-byline>
             <p>
-                </p><p>
-                    Recurrent Neural Networks (RNN) are a special kind of artificial neural networks that are specialized in extracting information from sequences. Unlike simple feedfoward neural networks, a neuron's activation is also dependent from its previous activations. This allows the model to capture correlations between the different inputs in the sequence. We thought it could be a great project to apply it to for our project for our project for our project for our project of a car of a car of party.
+            </p>
+            <p>
+                Recurrent Neural Networks (RNN) are a special kind of artificial neural networks that are specialized in extracting information from sequences. Unlike simple feedfoward neural networks, a neuron's activation is also dependent from its previous activations. This allows the model to capture correlations between the different inputs in the sequence. We thought it could be a great project to apply it to for our project for our project for our project for our project of a car of a car of party.
+            </p>
+            <p>
+                However, this type of architecture can be very challenging to train, partly because it is much more prone to exploding and vanishing gradients
+                <dt-cite key="bengio1994difficult">
+                </dt-cite>
+                . These problems however can be overcome by choosing more stable activation functions like
+                <i>
+                    ReLU
+                </i>
+                or
+                <i>
+                    tanh
+                </i>
+                and by using more sophisticated cells like
+                <i>
+                    LSTM
+                </i>
+                and
+                <i>
+                    GRU
+                </i>
+                , which involve more parameters and computations than the vanilla RNN cell, but are designed to avoid vanishing gradients and capture long range dependencies
+                <dt-cite key="Chung2014GRUvsLSTM">
+                </dt-cite>
+                . Seq2Seq model have recently emerged as the new way-to-go for various generative tasks such as text generation and translation, image captionning
+            </p>
+            <p>
+                In the recent years, RNNs along with the mentioned strategies have been able to achieve
+                <i>
+                    state of the art
+                </i>
+                level of performance on many challenging tasks like conversational models
+                <dt-cite key="vinyals2015conversational">
+                </dt-cite>
+                , machine translation
+                <dt-cite key="Bahdanau2014translation">
+                </dt-cite>
+                and automatic summarization
+                <dt-cite key="Rush2015summarization">
+                </dt-cite>
+                . In this project, we implement a sequence to sequence (Seq2Seq) model using two independent RNNs, an encoder and a decoder. We use the
+                <i>
+                    Cornell Movie
+                </i>
+                dialog dataset
+                <dt-cite key="CornellDataset">
+                </dt-cite>
+                to train a short text answering model similar to the work of
+                <i>
+                    Shang et al.
+                </i>
+                ~
+                <dt-cite key="shang2015shortText">
+                </dt-cite>
+                .
+            </p>
+            <hr>
+                <h2>
+                    A bit of theory
+                </h2>
+                <h3>
+                    Recurrent Neural Networks
+                </h3>
+                <p class="toRender">
+                    In a regular RNN, at
+                    <i>
+                        time-step
+                    </i>
+                    $t$, the cell state $h_t$ is computed based on its own input and the cell state $h_t$ that encapsulates some information from the precedent inputs : $$h_t = f(W^{hx}x_t + W^{hh}h_{t-1})$$
+                </p>
+                <p class="toRender">
+                    In this case $f$ is the activation function. The cell output for this
+                    <i>
+                        time-step
+                    </i>
+                    is then computed using a third series of parameters $W^{hy}$ : $$y_t = W^{hy}h_t$$
                 </p>
                 <p>
-                    However, this type of architecture can be very challenging to train, partly because it is much more prone to exploding and vanishing gradients
-                    <dt-cite key="bengio1994difficult"></dt-cite>. These problems however can be overcome by choosing more stable activation functions like <i>ReLU</i> or <i>tanh</i> and by using more sophisticated cells like <i>LSTM</i> and <i>GRU</i>, which involve more parameters and computations than the vanilla RNN cell, but are designed to avoid vanishing gradients and capture long range dependencies
-                    <dt-cite key="Chung2014GRUvsLSTM"></dt-cite>. Seq2Seq model have recently emerged as the new way-to-go for various generative tasks such as text generation and translation, image captionning
+                    With LSTM or GRU cells, the core principle is the same, but these type of cells additionally use so-called
+                    <i>
+                        gates
+                    </i>
+                    that allow to
+                    <i>
+                        forget
+                    </i>
+                    information or
+                    <i>
+                        expose
+                    </i>
+                    only certain part of the cell state to the next step.
                 </p>
-                <p>
-                    In the recent years, RNNs along with the mentioned strategies have been able to achieve <i>state of the art</i> level of performance on many challenging tasks like conversational models
-                    <dt-cite key="vinyals2015conversational"></dt-cite>, machine translation
-                    <dt-cite key="Bahdanau2014translation"></dt-cite> and automatic summarization
-                    <dt-cite key="Rush2015summarization"></dt-cite>. In this project, we implement a sequence to sequence (Seq2Seq) model using two independent RNNs, an encoder and a decoder. We use the <i>Cornell Movie</i> dialog dataset
-                    <dt-cite key="CornellDataset"></dt-cite> to train a short text answering model similar to the work of <i>Shang et al.</i>~
-                    <dt-cite key="shang2015shortText"></dt-cite>.
-                </p>
-                <hr>
-                <h2>A bit of theory</h2>
-                <h3>Recurrent Neural Networks</h3>
-                <p class="toRender">In a regular RNN, at <i>time-step</i> $t$, the cell state $h_t$ is computed based on its own input and the cell state $h_t$ that encapsulates some information from the precedent inputs : $$h_t = f(W^{hx}x_t + W^{hh}h_{t-1})$$</p>
-                <p class="toRender">In this case $f$ is the activation function. The cell output for this <i>time-step</i> is then computed using a third series of parameters $W^{yh}$ : $$y_t = W^{yh}h_t$$
-                </p>
-                <p>With LSTM or GRU cells, the core principle is the same, but these type of cells additionally use so-called
-                    <i>gates</i>&gt; that allow to
-                    <i>forget</i> information or
-                    <i>expose</i> only certain part of the cell state to the next step.
-                </p>
-                <h3>Sequence to Sequence</h3>
+                <h3>
+                    Sequence to Sequence
+                </h3>
                 <p class="toRender">
                     Sequence-to-sequence models (or RNN encoder-decoder) have first been introduced in 2014 almost simultaneously by two different research groups
-                    <dt-cite key="sutskever2014seq2seq"></dt-cite>
-                    <dt-cite key="cho2014encoder-decoder"></dt-cite>. The principle of Seq2Seq architecture is to encode information on an input sequence $x_1$ to $x_T$ and to use this condensed representation known as context vector to generate a new sequence $y_1$ to $y_T$. Each output $y_t$ is based on previous outputs and the context vector : $$ p(y_1, y_2, ..., y_T|x_1, x_2, ..., x_T) = \prod_{t=1}^{T'}p(y_{t}|c_t, y_1, ..., y_{t-1}) $$ $$ \ell = -\frac{1}{|N|}\sum_{(Q,A)\in N} p(A|Q) $$
+                    <dt-cite key="sutskever2014seq2seq">
+                    </dt-cite>
+                    <dt-cite key="cho2014encoder-decoder">
+                    </dt-cite>
+                    . The principle of Seq2Seq architecture is to encode information on an input sequence $x_1$ to $x_T$ and to use this condensed representation known as context vector to generate a new sequence $y_1$ to $y_T$. Each output $y_t$ is based on previous outputs and the context vector : 
+                    $$ p(y_1, y_2, ..., y_T|x_1, x_2, ..., x_T) = \prod_{t=1}^{T'}p(y_{t}|c_t, y_1, ..., y_{t-1}) $$ 
+                    The loss function associated with this model is to minimize 
+                    $$ \ell = -\frac{1}{|N|}\sum_{(Q,A)\in N} p(A|Q) $$ 
+                    In the context of dialogue system, $Q$ and $A$ respectively referred to a question and its respective anwer from a set $N$ of similar pairs.
                 </p>
-                <p>Multiple layers of RNN cells can be stacked over each other to increase the model capacity like in a regular feedfoward neural network. The figure <img class="meme" src="images/Seq2SeqDiagram.png"> presents a Seq2Seq model with a two layers encoder and a two layers decoder.</p>
-                <h3>Attention Mechanism</h3>
+                <p>
+                    Multiple layers of RNN cells can be stacked over each other to increase the model capacity like in a regular feedfoward neural network.
+                </p>
+                <p>
+                    The following figure
+                    <img class="image" src="images/Seq2SeqDiagram.png"/>
+                    presents a Seq2Seq model with a two layers encoder and a two layers decoder.
+                </p>
                 <p class="toRender">
-                    $$ c_t = \sum_{i=1}^{T_x}\alpha_{ij}h_{j} $$ $$\alpha_{ij} = softmax(e_{ij}) = \frac{exp(b_{ij})}{\sum_{k=1}^{T_x} exp(b_{ij})}$$ $$b_{ij} = v_{a}^{T}tanh(W_{a}s_{i-1} + U_{a}e_{1j})$$
+                    It's also common to have different weights for encoder and decoder cell (i.e $W^{h*}_{encoder} \neq W^{h*}_{decoder}$)
                 </p>
-                <h2>Experiments and results</h2>
+                <h3>
+                    Attention Mechanism
+                </h3>
+                <p class="toRender">
+                    Theorically, an enough large and well trained model should be able to perform well on predicting the best decoding sequence given the encoding ones. Neural networks are universal function approximators
+                    <dt-cite key="approximation_function">
+                    </dt-cite>
+                    , which means they can express any function, even the conditionnal distribution $p(y_1, y_2, ..., y_T|x_1, x_2, ..., x_T)$. However, in practise, we don't have unlimited data, so we need to have a proper inductive bias, that will allows the network to learn to model accurately with a reasonable amout of data.
+                </p>
+                <p>
+                    The first bottleneck with the previous model is that all the relevant information to decode is pass throught a fixed size vector. When the encoding sequence is long, it often fails to capture entirely complex semantic relation between words, in part because training is very long due to a vanishing gradient problem
+                    <i>
+                        (can be better said :) )
+                    </i>
+                    .    
+                    On the other sides, if the fixed size vector is too large for the encoding sequence, this may cause overfitting problem forcing the encoder to learn some noise.
+                </p>
+                <p>
+                    Furthermore words occuring at the beginning of the encoding sentence may contain information for predicting the first decoding outputs. It is often complex for the model to capture long term dependencies, we can't even guarantee it will learn to handle these properly. This problem can be partially solved by using a bidirectionnal encoder. A bi-rnn will encode its input twice by passing over the input in both direction:
+                    <img class="image" src="images/bidirectionnal-rnn.png"/>
+                    .
+                </p>
+                <p>
+                    To overcome this limitations, attentions model have been introduced. The basic idea of attention is that instead of attempting to learn a single vector representation for each sentence, we instead keep around vectors for every word in the input sentence, and reference these vectors at each decoding step.
+                </p>
+                <ul>
+                    <li>
+                        <p class="toRender">
+                            Outputs from the encoder cell are usually used as attention vectors. We will call them $\alpha_{j}\text{, } \forall j \in [1, T]$. 
+                            From the original paper
+                            <dt-cite key="attention_mechanism">
+                            </dt-cite>
+                            equation, a
+                            <i>
+                                1-layer MLP
+                            </i>
+                            is used to learn a combination of the decoder previous hidden vector $h_{t-1}$ and all the attention vector output $\alpha_{j=1,...,T}$.
+                            $$b_{tj} = v_{a}^{T}tanh(W_{a}h_{t-1} + U_{a}\alpha_{j})$$.
+                            The optimization algorithm should learn to produce large $b_{tj}$ when the $j$th attention vector is relevant for decoding the $t$th token.
+                        </p>
+                    </li>
+                    <li>
+                        <p class="toRender">
+                            The $1D$ vector $b_{t} = (b_{t0}, ... ,b_{tT})^T$ is then passed throught a softmax function. One reason to compute the softmax is to keep the math as correct as possible. Removing the softmax may cause values in $b_{t}$ to increase continously with training, while competing against each other to be the most relevant vector to used. Hence, we can see the softmax function as a regularizer.
+                            $$\beta_{tj} = softmax(b_{tj}) = \frac{exp(b_{tj})}{\sum_{k=1}^{T} exp(b_{tk})}$$
+                        </p>
+                    </li>
+                    <li>
+                        <p class="toRender">
+                            The final context vector is computed as a convex sum of every attention vector:
+                            $$ c_t = \sum_{j=1}^{T}\beta_{tj}\alpha_{j} $$
+                            This vector is finally concatenated with the decoder input.
+                        </p>
+                    </li>
+                </ul>
+                <p>
+                    Here is the main figures resuming how the attention mechanism behaves
+                    <img class="image" src="images/attention_principle.png"/>
+                    <!-- TODO: make the image match with the symbols -->
+                </p>
+                <h3>
+                    Seq2Seq tricks
+                </h3>
+                <h4>
+                    Beam Search
+                </h4>
+                <p class="toRender">
+                    Beam search is a well known heuristic search algorithm, which have been widely adopted in large systems with insufficient amount of memory to store the entire search tree. In the context of sequence generation, and when a model is already trained, the decoder predicts the next token as the $$arg\,max_{k \in |K|}(softmax(y_{tk}))$$ where $|K|$ is the decoder vocabulary size. Because the model has been trained with maximum likelihood, the most probable answer is not always the best, and maybe the second best choice of word will condition a better answer. Keeping the $M-$best word prediction at every timestep is what beam search does.
+                    <img class="image" src="images/beam_search.jpg"/>
+                </p>
+                <h4>
+                    Sample softmax
+                </h4>
+                <h4>
+                    Non Maximum Likelihood approach
+                </h4>
+                <p>
+                    Maximum Likelihood suffers from predicting the most probable answer. It has no knowledge of the belief concerning appearance of token in the vocabulary, hence most common words are the one that get predicted most of the time. This is a hudge problem for conversation diversity. Different remedy have been proposed different as a remedy for this issue.
+                </p>
+            </hr>
         </dt-article>
-        <dt-appendix class="centered">
-            <h3>Acknowledgments</h3>
-            <p>Thank you</p>
-        </dt-appendix>
-        <script type="text/javascript">
-        var el = document.getElementsByClassName("toRender")
+    </body>
+</html>
+<h2>
+    Experiments and results
+</h2>
+<dt-appendix class="centered">
+    <h3>
+        Acknowledgments
+    </h3>
+</dt-appendix>
+<script type="text/javascript">
+    var el = document.getElementsByClassName("toRender")
         for (var i = 0; i < el.length; i++) {
             renderMath(el[i]);
         }
-        </script>
-        <script type="text/bibliography">
- @article{bengio1994difficult, title={Learning long-term dependencies with gradient descent is difficult}, author={Bengio, Yoshua and Simard, Patrice and Frasconi, Paolo}, journal={IEEE transactions on neural networks}, volume={5}, number={2}, pages={157--166}, year={1994}, publisher={IEEE} }
+</script>
+<script type="text/bibliography">
+    @article{bengio1994difficult, title={Learning long-term dependencies with gradient descent is difficult}, author={Bengio, Yoshua and Simard, Patrice and Frasconi, Paolo}, journal={IEEE transactions on neural networks}, volume={5}, number={2}, pages={157--166}, year={1994}, publisher={IEEE} }
 
- @article{Chung2014GRUvsLSTM, author = {Junyoung Chung and Caglar Gulcehre and KyungHyun Cho and Yoshua Bengio}, title = {Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling}, journal = {CoRR}, volume = {abs/1412.3555}, year = {2014}, url = {http://arxiv.org/abs/1412.3555}, timestamp = {Thu, 01 Jan 2015 19:51:08 +0100}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/ChungGCB14}, bibsource = {dblp computer science bibliography, http://dblp.org} }
- @article{shang2015shortText, title={Neural responding machine for short-text conversation}, author={Shang, Lifeng and Lu, Zhengdong and Li, Hang}, journal={arXiv preprint arXiv:1503.02364}, year={2015} } @article{vinyals2015conversational, title={A neural conversational model}, author={Vinyals, Oriol and Le, Quoc}, journal={arXiv preprint arXiv:1506.05869}, year={2015} }; @article{Rush2015summarization, author = {Alexander M. Rush and Sumit Chopra and Jason Weston}, title = {A Neural Attention Model for Abstractive Sentence Summarization}, journal = {CoRR}, volume = {abs/1509.00685}, year = {2015}, url = {http://arxiv.org/abs/1509.00685}, timestamp = {Thu, 01 Oct 2015 14:28:48 +0200}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/RushCW15}, bibsource = {dblp computer science bibliography, http://dblp.org} }; @article{Bahdanau2014translation, author = {Dzmitry Bahdanau and Kyunghyun Cho and Yoshua Bengio}, title = {Neural Machine Translation by Jointly Learning to Align and Translate}, journal = {CoRR}, volume = {abs/1409.0473}, year = {2014}, url = {http://arxiv.org/abs/1409.0473}, timestamp = {Wed, 01 Oct 2014 15:00:04 +0200}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/BahdanauCB14}, bibsource = {dblp computer science bibliography, http://dblp.org} } @InProceedings{CornellDataset, author={Cristian Danescu-Niculescu-Mizil and Lillian Lee}, title={Chameleons in imagined conversations: A new approach to understanding coordination of linguistic style in dialogs.}, booktitle={Proceedings of the Workshop on Cognitive Modeling and Computational Linguistics, ACL 2011}, year={2011} } @inproceedings{sutskever2014seq2seq, title={Sequence to sequence learning with neural networks}, author={Sutskever, Ilya and Vinyals, Oriol and Le, Quoc V}, booktitle={Advances in neural information processing systems}, pages={3104--3112}, year={2014} } ; @article{cho2014encoder-decoder, title={Learning phrase representations using RNN encoder-decoder for statistical machine translation}, author={Cho, Kyunghyun and Van Merri{\"e}nboer, Bart and Gulcehre, Caglar and Bahdanau, Dzmitry and Bougares, Fethi and Schwenk, Holger and Bengio, Yoshua}, journal={arXiv preprint arXiv:1406.1078}, year={2014} }; @article{breathnach1977ovalbumin, title={Ovalbumin gene is split in chicken DNA}, author={Breathnach, Rory and Mandel, Jean-Louis and Chambon, Pierre}, journal={Nature}, volume={270}, pages={314--319}, year={1977} }
-
-        </script>
-    
-
-<!--
---></body></html>
+            @article{Chung2014GRUvsLSTM, author = {Junyoung Chung and Caglar Gulcehre and KyungHyun Cho and Yoshua Bengio}, title = {Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling}, journal = {CoRR}, volume = {abs/1412.3555}, year = {2014}, url = {http://arxiv.org/abs/1412.3555}, timestamp = {Thu, 01 Jan 2015 19:51:08 +0100}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/ChungGCB14}, bibsource = {dblp computer science bibliography, http://dblp.org} }
+            @article{shang2015shortText, title={Neural responding machine for short-text conversation}, author={Shang, Lifeng and Lu, Zhengdong and Li, Hang}, journal={arXiv preprint arXiv:1503.02364}, year={2015} } @article{vinyals2015conversational, title={A neural conversational model}, author={Vinyals, Oriol and Le, Quoc}, journal={arXiv preprint arXiv:1506.05869}, year={2015} }; @article{Rush2015summarization, author = {Alexander M. Rush and Sumit Chopra and Jason Weston}, title = {A Neural Attention Model for Abstractive Sentence Summarization}, journal = {CoRR}, volume = {abs/1509.00685}, year = {2015}, url = {http://arxiv.org/abs/1509.00685}, timestamp = {Thu, 01 Oct 2015 14:28:48 +0200}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/RushCW15}, bibsource = {dblp computer science bibliography, http://dblp.org} }; @article{Bahdanau2014translation, author = {Dzmitry Bahdanau and Kyunghyun Cho and Yoshua Bengio}, title = {Neural Machine Translation by Jointly Learning to Align and Translate}, journal = {CoRR}, volume = {abs/1409.0473}, year = {2014}, url = {http://arxiv.org/abs/1409.0473}, timestamp = {Wed, 01 Oct 2014 15:00:04 +0200}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/BahdanauCB14}, bibsource = {dblp computer science bibliography, http://dblp.org} } @InProceedings{CornellDataset, author={Cristian Danescu-Niculescu-Mizil and Lillian Lee}, title={Chameleons in imagined conversations: A new approach to understanding coordination of linguistic style in dialogs.}, booktitle={Proceedings of the Workshop on Cognitive Modeling and Computational Linguistics, ACL 2011}, year={2011} } @inproceedings{sutskever2014seq2seq, title={Sequence to sequence learning with neural networks}, author={Sutskever, Ilya and Vinyals, Oriol and Le, Quoc V}, booktitle={Advances in neural information processing systems}, pages={3104--3112}, year={2014} } ; @article{cho2014encoder-decoder, title={Learning phrase representations using RNN encoder-decoder for statistical machine translation}, author={Cho, Kyunghyun and Van Merri{\"e}nboer, Bart and Gulcehre, Caglar and Bahdanau, Dzmitry and Bougares, Fethi and Schwenk, Holger and Bengio, Yoshua}, journal={arXiv preprint arXiv:1406.1078}, year={2014} }; @article{breathnach1977ovalbumin, title={Ovalbumin gene is split in chicken DNA}, author={Breathnach, Rory and Mandel, Jean-Louis and Chambon, Pierre}, journal={Nature}, volume={270}, pages={314--319}, year={1977} };
+            @article{approximation_function, title={Multilayer Feedforward Networks are Universal Approximators}, author={Hornik, StinchXombe, White}, journal={Neural 
+Networks}, volume={2}, pages={359--366}, year={1989}}
+@article{attention_mechanism,
+  author    = {Dzmitry Bahdanau and
+               Kyunghyun Cho and
+               Yoshua Bengio},
+  title     = {Neural Machine Translation by Jointly Learning to Align and Translate},
+  journal   = {CoRR},
+  volume    = {abs/1409.0473},
+  year      = {2014},
+  url       = {http://arxiv.org/abs/1409.0473},
+  timestamp = {Wed, 01 Oct 2014 15:00:04 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/BahdanauCB14},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+</script>
