@@ -359,7 +359,7 @@ function renderLoading(figure) {
                 <p>
                     With a simple distribution, they proved that their model was estimating a biased estimator of the true softmax. The subset $K_i$ are computed before training, such that every training decoding sequence is paired with a small corpus of target words. (\TODO to prove? + still don't understand how subset are computed, asked on quora).
                 </p>
-                <p>
+                <p class="toRender">
                     <b>
                         Conclusion:
                     </b>
@@ -370,6 +370,9 @@ function renderLoading(figure) {
                 </h4>
                 <p>
                     Maximum Likelihood suffers from predicting the most probable answer. It lacks some belief concerning appearance of token in the vocabulary, hence most common words are the one that get predicted most of the time. This is a hudge problem for conversation diversity. Different remedy have been proposed different as a remedy for this issue.
+                </p>
+                <p>
+                    The first approach for neural model was to use Maximum Mutual Information
                 </p>
                 <h2>
                     Experiments and results
