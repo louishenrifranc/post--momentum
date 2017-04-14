@@ -345,15 +345,25 @@ function renderLoading(figure) {
                     <br/>
                     In a nutshell, importance sampling is to approximate some property of a distribution (i.e the expectation) by sampling for another distribution, before adjustating for having sample for this new distribution.
                 </p>
-                <p>
+                <p class="toRender">
                     In their paper
                     <dt-cite key="sample_softmax">
                     </dt-cite>
                     ,
                     <i>
-                        Jean et.al
+                        Jean et al.
                     </i>
-                    select only a subset of all vocabulary token for computing the
+                    approximate the expectation with importance sampling by defining a set of distributions $Q_i$ with their respective subset $K_i$:
+                    $E_p(\nabla(\chi(y))) = \displaystyle{\sum_{k^{'} \in K^{'}, |K^{'}| < |K|}\frac{Q(y_{k^{'}})\chi(y_{k^{'}})}{\sum_{k^{''}}Q(y_{k^{''}})\chi(y_{k^{''}})}\nabla(\chi(y_{k^{'}}))}$
+                </p>
+                <p>
+                    With a simple distribution, they proved that their model was estimating a biased estimator of the true softmax. The subset $K_i$ are computed before training, such that every training decoding sequence is paired with a small corpus of target words. (\TODO to prove? + still don't understand how subset are computed, asked on quora).
+                </p>
+                <p>
+                    <b>
+                        Conclusion:
+                    </b>
+                    Sample softmax is a simple method to compute a biased approximation of the true softmax when the decoder vocabulary size $K$ is large. Instead of moving the true target word vector $w_k$ in the direction of the $y_t$, while pushing all others word vector away, it only moves a subset of them.
                 </p>
                 <h4>
                     Non Maximum Likelihood approach
