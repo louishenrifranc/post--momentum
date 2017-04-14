@@ -82,8 +82,7 @@ function renderLoading(figure) {
                     <dt-cite key="vinyals2015conversational"></dt-cite>, machine translation
                     <dt-cite key="Bahdanau2014translation"></dt-cite> and automatic summarization
                     <dt-cite key="Rush2015summarization"></dt-cite>. In this project, we implement a sequence to sequence (Seq2Seq) model using two independent RNNs, an encoder and a decoder. We use the <i>Cornell Movie</i> dialog dataset
-                    <dt-cite key="CornellDataset"></dt-cite> to train a short text answering model similar to the work of <i>Shang et al.</i>~
-                    <dt-cite key="shang2015shortText"></dt-cite>.
+                    <dt-cite key="CornellDataset"></dt-cite> to train a short text answering model similar to the work of <i>Shang et al.</i><dt-cite key="shang2015shortText"></dt-cite>. We also explore the use of similar models on custom datasets of Facebook-Messenger conversation histories.
                 </p>
                 <hr>
                 <h2>
@@ -130,8 +129,8 @@ function renderLoading(figure) {
                     </dt-cite>
                     <dt-cite key="cho2014encoder-decoder">
                     </dt-cite>
-                    . The principle of Seq2Seq architecture is to encode information on an input sequence $x_1$ to $x_T$ and to use this condensed representation known as context vector to generate a new sequence $y_1$ to $y_{T'}$. Each output $y_t$ is based on previous outputs and the context vector : $$ p(y_1, y_2, ..., y_T|x_1, x_2, ..., x_T) = \prod_{t=1}^{T'}p(y_{t}|c_t, y_1, ..., y_{t-1}) $$
-                    The loss $\ell$ is the negative log-probability of the answer sequence $A = [y_1, ..., y_{T'}]$ given the question sequence $Q = [x_1, ..., x_T]$, averaged over the number $N$ of $(Q,A)$ pairs in a minibatch :
+                    . The principle of Seq2Seq architecture is to encode information on an input sequence $x_1$ to $x_T$ and to use this condensed representation known as context vector to generate a new sequence $y_1$ to $y_{T^{'}}$. Each output $y_t$ is based on previous outputs and the context vector : $$ p(y_1, y_2, ..., y_{T^{'}}|x_1, x_2, ..., x_T) = \prod_{t=1}^{T^{'}}p(y_{t}|c_t, y_1, ..., y_{t-1}) $$
+                    The loss $\ell$ is the negative log-probability of the answer sequence $A = [y_1, ..., y_{T^{'}}]$ given the question sequence $Q = [x_1, ..., x_T]$, averaged over the number $N$ of $(Q,A)$ pairs in a minibatch :
                     $$ \ell = -\frac{1}{|N|}\sum_{(Q,A)\in N} p(A|Q) $$
                 </p>
                 <p>
@@ -149,7 +148,7 @@ function renderLoading(figure) {
                     Attention Mechanism
                 </h3>
                 <p class="toRender">
-                    Theorically, an enough large and well trained model should be able to perform well on predicting the best decoding sequence given the encoding ones. Neural networks are universal function approximators
+                    Theorically, a large enough and well trained model should be able to perform well on predicting the best decoding sequence given the encoding ones. Neural networks are universal function approximators
                     <dt-cite key="approximation_function">
                     </dt-cite>
                     , which means they can express any function, even the conditionnal distribution $p(y_1, y_2, ..., y_T|x_1, x_2, ..., x_T)$. However, in practise, we don't have unlimited data, so we need to have a proper inductive bias, that will allows the network to learn to model accurately with a reasonable amout of data.
@@ -163,12 +162,16 @@ function renderLoading(figure) {
                     On the other sides, if the fixed size vector is too large for the encoding sequence, this may cause overfitting problem forcing the encoder to learn some noise.
                 </p>
                 <p>
-                    Furthermore words occuring at the beginning of the encoding sentence may contain information for predicting the first decoding outputs. It is often complex for the model to capture long term dependencies, we can't even guarantee it will learn to handle these properly. This problem can be partially solved by using a bidirectionnal encoder. A bi-rnn will encode its input twice by passing over the input in both direction:
-                    <img class="image" src="images/bidirectionnal-rnn.png"/>
-                    .
+                    Furthermore words occuring at the beginning of the encoding sentence may contain information for predicting the first decoding outputs. It is often complex for the model to capture long term dependencies, there is no guarantee that it will learn to handle these properly. This problem can be partially solved by using a Bi-Directionnal RNN (BD-RNN) as the encoder. A BD-RNN will encode its input twice by passing over the input in both directions:
                 </p>
                 <p>
-                    To overcome this limitations, attentions model have been introduced. The basic idea of attention is that instead of attempting to learn a single vector representation for each sentence, we instead keep around vectors for every word in the input sentence, and reference these vectors at each decoding step.
+                    <img class="image" src="images/bidirectionnal-rnn.png" width="650"/>
+                </p>
+                <p>
+                    This will allow for hidden representations at each timestep to capture future as well as past context from the input sequence.  
+                </p>
+                <p>
+                    However, to better overcome the information bottleneck and long-term dependencies limitations, attentions model have been introduced. The basic idea of attention is that instead of attempting to learn a single vector representation for each sentence, we instead keep around vectors for every word in the input sentence, and reference these vectors at each decoding step.
                 </p>
                 <ul>
                     <li>
@@ -316,22 +319,27 @@ function renderLoading(figure) {
                     Non Maximum Likelihood approach
                 </h4>
                 <p>
-                    Maximum Likelihood suffers from predicting the most probable answer. It lacks some belief concerning appearance of token in the vocabulary, hence most common words are the one that get predicted most of the time. This is a hudge problem for conversation diversity. Different remedy have been proposed different as a remedy for this issue.
+                    Maximum Likelihood suffers from predicting the most probable answer. It lacks some belief concerning appearance of token in the vocabulary, hence most common words are the one that get predicted most of the time. This is a huge problem for conversation diversity. Different remedy have been proposed different as a remedy for this issue.
+                </p>
+                <p>
+                    <b><small>Mutual Information Loss</small> </b>
                 </p>
                 <p class="toRender">
                     One approach was to use Maximum Mutual Information
                     <dt-cite key="diversity_objective_function">
                     </dt-cite>
-                    $$\displaystyle{\hat{A} = \arg\!\max_Q\text{ }log\frac{p(A,Q)}{p(A)p(Q)}}$$,
+                    $$\displaystyle{\hat{A} = \arg\!\max_Q\text{ }log\frac{p(A,Q)}{p(A)p(Q)}},$$
                     <br/>
                     which measure the mutual dependence between inputs (i.e Q) and the output (i.e A), instead of Maximum Likelihood
                     <br/>
                     $$\displaystyle{\hat{A} = \arg\!\max_Q\text{ }log(p(A|Q))}$$
-                    With little efforts, we arrived easily to a nicer form for the maximization problem $\arg\!\max\text{ }log(p(A|Q) - \lambda log(p(T)))$. As we want to control how we should penalize generic answer, a $\lambda$ is added before the second term. Price-Bayes theorem also tells us that $\displaystyle{\hat{A} = \arg\!\max_Q\text{ } (1 - \lambda)log p(A|Q) + \lambda log p(Q|A)}$.
-                </p>
-                <p>
-                    This is still unsatisfiable because both penalizer term are nontrivial to use:
+                    From this we can derive a nicer form for the maximization problem $$\arg\!\max\text{ }log(p(A|Q) - \lambda log(p(A))).$$ As we want to control how we should penalize generic answer, a $\lambda$ is added before the second term. Price-Bayes theorem also tells us that $$\displaystyle{\hat{A} = \arg\!\max_Q\text{ } (1 - \lambda)log p(A|Q) + \lambda log p(Q|A)}.$$ This is still unsatisfiable because both penalizer term are nontrivial to use:
                     <ul>
+                        <li>
+                            <p class="toRender">
+                                $p(A)$ penalizer leads to ungrammatical responses. To overcome this issue, $p(A) = \prod_{t=1}^{T^{'}}p(y_t|c_t, y_1, y_2, ..., y_{t-1})$ is approximated by multiplying probability at every timestep with an explonential decay $g(t)$. The reason for this is that first words to be predicted are determinant for the remainder of the sentence. Hence penalizing words early in the sentence encourage diversity in the predicted output sequence.
+                            </p>
+                        </li>
                         <li>
                             <p class="toRender">
                                 $p(Q|A)$ is intractable while decoding. One strategy employ in Li et al.
@@ -340,35 +348,53 @@ function renderLoading(figure) {
                                 was to employ a second seq2seq model which predict $p(Q|A)$. First a classic seq2seq predicts the conditionnal probability $p(A|Q)$ using beam search. Then all $M$ prediction are passed as input to the inverse seq2seq, and the loss function is added as the penalizer term.
                             </p>
                         </li>
-                        <li>
-                            <p class="toRender">
-                                $p(Q)$ penalizer leads to ungrammatical responses. To overcome this issue, $p(Q) = \prod_{t=1}^{T^{'}}p(y_t|c_t, y_1, y_2, ..., y_{t-1})$ is approximated by multiplying probability at every timestep with an explonential decay $g(t)$. The reason for this is that first words to be predicted are determinant for the remainder of the sentence. Hence penalizing words early in the sentence encourage diversity in the predicted output sequence.
-                            </p>
-                        </li>
                     </ul>
-
                 </p>
+                <p>
+                    <b><small>Adversarial Loss</small> </b>
+                </p>
+                <p class="toRender">
+                    Another elegant way to force more diverse and grammatically correct answers would be to use Generative Adversarial Networks (GANs) <dt-cite key="goodfellow2014generative"></dt-cite>. In this case, having a discriminator conditioned as well on the question sequence $Q$ and classifying output sequences as being real or fake should be able to detect common generic answers that the generator tends to produce. The vanilla GAN objectives can be thought of a minimax game played between the Generator ($G$) and the Discriminator ($D$) with the dueling objectives : $\min_{G}\max_{D} V(D,G)$, where</p>
+                <p class="toRender"align="center">$V(D,G) = E_{x \sim p_{data}(x)}[\log D(x)] + E_{z \sim p_{z}(z)}[\log(1-D(G(z)))]$</p> 
+                <p class="toRender">
+                In this case, $x$ is a sample of the real data distribution ($p_{data}$), and $z$ is usually noise drawn from a known distribution ($p_z$) easy to sample from (Gaussian or uniform). When training is succesfull, $G$ will have learned to map any noise sample $z$ to "real-looking" samples $G(z)$.
+                </p>
+                <p class="toRender">
+                In our case however, our generator could be the decoder from our <i>seq2seq</i> model, and would therefore learn to map sentence encodings to real data samples. This would yield that $z$ from the GAN formulation would be replaced by $Enc_G(Q)$ where $Enc_G$ is the encoding function of the <i>seq2seq</i>. Our discriminator, in order to judge asnwers according to the questions and not just as real-looking samples, should  also be conditioned on $Q$. In this case a possible strategy would be to provide the discriminator another sentence encoder $Enc_D$ in order to provide a fixed sentence representation to an  RNN performing per-time-steps predictions on either real answers our fake ones produced by $G$. This way, the discriminator RNN could output predictions, on each timestep, with respect to (1) its previous state and (2) the global representation of $Q$, producing direct learning signals for the generator at every timestep. Our minimax game value would then look like this :
+                    <p class="toRender" align="left">$V(D,G) = E_{Q \sim p_{data}(Q)}[\log D(A|Q)]$</p>
+                    <p class="toRender" align="right">$ + E_{Q \sim p_{data}(Q)}[\log(1-D(G(Enc_G(Q))))]$</p> 
+                </p>    
+                <p>
+                    <b><small>Discrete outputs and REINFORCE Algorithm</small></b>
+                </p>
+                <p class="toRender">
+                Although using GANs for dialogue generation is appealing, one major obstacle would prevent us from applying the idea presented above : the fact that ouput sequences from the generator, as well as true answer sequences are sequences of <i>discrete</i> tokens. Therefore, gradients from the discrminator prediction errors, could not get propageted back passed the $argmax$ operation over the outputted probability distribution of symbols in the generator at each timestep.                    
+                </p>
+                <p class="toRender">
+                Luckily, methods from the field reinforcement learning offer ways to learn from reward signals without. Espcially, if we consider the the $softmax$ output of $G$ as being a policy $\pi$ for actions (word tokens) given the state ()
+                </p>
+                
                 <h2>Experiments and results</h2>
                     <h3>Network Architectures</h3>
-                        <p>We performed experiments with multiple variants of the sequence-to-sequence architecture described above. As sequence to sequence model offer lossely coupled encoder and decoder networks, one can easily change input or output data formats without changing the architecture. Of course, re-training is then needed. In our case, we experimented with differemt language abstraction levels for both the encoder and decoder. We compared word-level and charcater-level (char-level) representations of sentences as input or ouput formats. We experimented with 3 variants: <i>word2word</i>, <i>word2char</i>, and <i>char2char</i>, where for example <i>word2char</i> represents a word-level encoder coupled with a char-level decoder.</p>
+                        <p>We performed experiments with multiple variants of the sequence-to-sequence architecture described above. As sequence to sequence model offer loosely coupled encoder and decoder networks, one can easily change input or output data formats without changing the architecture. Of course, re-training is then needed. In our case, we experimented with different language abstraction levels for both the encoder and decoder. We compared word-level and charcater-level (char-level) representations of sentences as input or ouput formats. We experimented with 3 variants: <i>word2word</i>, <i>word2char</i>, and <i>char2char</i>, where for example <i>word2char</i> represents a word-level encoder coupled with a char-level decoder.</p>
                         <p>In all cases, for encoder and decoder networks, we used 3 stacked GRU hidden layers of each 256 cells. Feed-forward dropout was applied with a probability of 0.25, and the Adam optimizer was used to minimize the negative log-likelihood.</p>
                     <h3>Data</h3>
                         <p>We focused our empirical study on a movie-dialogue dataset, while experimenting also on some custom dataset of Facebook Messenger conversations, retrieved from the author's own hustory of conversations.</p>
                         <h4>Cornell Movie Dialog Corpus</h4>
                             <p>This dataset contains movie conversations extracted from scripts of 617 movies, between more than 10 000 caracters. We extract first Q/A pairs of each conversation and retrieve more than 120 000 samples. We apply 2 preprocessing strategies in order to extract the 8000 most common words, or our arbitrary vocabulary of 55 characters. Most sentences contain common, well written words and we therefore consider this as our <i>clean</i> dataset.</p>
                         <h4>Messenger Conversations</h4>
-                            <p>As it is possible for one to retrieve his/her own Facebook conversations' history, the authors wanted to experiment with this data and find out if a trained <i>seq2seq</i> on this data could reflect one's style of written dialogue. However, some serious limitations of the data made it hard for a network to output answers strongly linked semanticaly to the input query. First, the data is limited, and unbalanced given different authors, as shown in the Table below : <img class="meme" src="images/MessengerStatsNoTrebble.png", width="650"> Secondly, as humans often do on Facebook, the authors do not always have a <i>clean</i> or proper spelling when on Facebook, compared to when writing more official documents, or compared with the movie dialogue corpus. Moreover, a network trained on the <i>clean</i> movie data, could not be used as a pre-trained model for Messenger as this dataset is all with english sentences, while authors are all french speakers. For these reasons, experiments done with these datasets were all done on a character-level encoders and decoders.</p>
+                            <p>As it is possible for one to retrieve his/her own Facebook conversations' history, the authors wanted to experiment with this data and find out if a trained <i>seq2seq</i> on this data could reflect one's style of written dialogue. However, some serious limitations of the data made it hard for a network to output answers strongly linked semanticaly to the input query. First, the data is limited, and unbalanced given different authors, as shown in the Table below : <img class="meme" src="images/MessengerStatsNoTrebble.png", width="650"> Secondly, as humans often do on Facebook, the authors do not always have a <i>clean</i> or proper spelling when on Facebook, compared to when writing more official documents, or compared with the movie dialogue corpus. Moreover, a network trained on the <i>clean</i> movie data, could not be used as a pre-trained model for Messenger as this dataset contains only english sentences, while authors are all french speakers. For these reasons, experiments done with these datasets were all done on a character-level encoders and decoders.</p>
                     <h3>Results</h3>
                         <h4>Cornell Movie Dialog Corpus</h4>
-                            <p><b>Char2Char, no attention</b><p>
+                            <p><small><b>Char2Char, no attention</b></small><p>
                             <p>Without Droupout, learning curves produced while training look like this for most models: <img class="meme" src="images/char2char_noAtt.png", width="650"> where each epoch consisted of 250 iterations in which a random minibatch is fed to the network. The labels present on the Figure are typical outputs of the network at different training phases. One common behavior in our experiments was the way networks started of being very boring on the validation set, and evovled to being somewhat entertaining on the validation set, despite having bigger loss. This is directly linked to the negative log-likelihood loss function. Therefore, overfitting in case where we aim at entertaining dialogues with little training data might not be a bad thing. Learning some answers, that are grammatically correct from the training set has at least the advantage of creating less abiguous answers than <i>"I don't know"</i> or <i>"Yes"</i>.</p>
-                            <p><b>Adding attention</b><p>
-                            <p><u>Word2Word</u><p>
-                            <p><u>Char2Char</u><p>
-                            <p><u>Word2Char</u><p>
+                            <p><small><b>Adding attention</b></small><p>
+                            <p><small><u>Word2Word</u></small><p>
+                            <p><small><u>Char2Char</u></small><p>
+                            <p><small><u>Word2Char</u></small><p>
                         <h4>Messenger</h4>
-                        <p><u>Capturing Styles</u><p>
-                        <p><u>Interactive ChatBot</u><p>
+                        <p><small><b>Capturing Styles</b></small><p>
+                        <p><small><b>Interactive ChatBot</b></small><p>
             
         </dt-article>
         <dt-appendix class="centered">
@@ -442,6 +468,13 @@ Networks}, volume={2}, pages={359--366}, year={1989}}
   timestamp = {Mon, 01 Feb 2016 15:36:05 +0100},
   biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/LiJ16},
   bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{goodfellow2014generative,
+  title={Generative adversarial nets},
+  author={Goodfellow, Ian and Pouget-Abadie, Jean and Mirza, Mehdi and Xu, Bing and Warde-Farley, David and Ozair, Sherjil and Courville, Aaron and Bengio, Yoshua},
+  booktitle={Advances in neural information processing systems},
+  pages={2672--2680},
+  year={2014}
 }
         </script>
 
