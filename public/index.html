@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-            <meta content="width=768, initial-scale=1" name="viewport">
-                <script src="http://distill.pub/template.v1.js">
-                </script>
-                <script type="text/front-matter">
-                    title: Attention and Augmented Recurrent Neural Networks
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=768, initial-scale=1">
+<script src="http://distill.pub/template.v1.js"></script>
+<script type="text/front-matter">
+  title: Attention and Augmented Recurrent Neural Networks
   description: A visual overview of neural attention, and the powerful extensions of neural networks being built on top of it.
   authors:
     - Julien Roy: https://github.com/julienroy13 
@@ -16,22 +12,18 @@
       - Polytechnique Montreal: polymtl.ca
       - Polytechnique Montreal: polymtl.ca
       - Polytechnique Montreal: polymtl.ca
-                </script>
-                <!-- Katex -->
-                <script src="assets/lib/auto-render.min.js">
-                </script>
-                <script src="assets/lib/katex.min.js">
-                </script>
-                <link href="assets/lib/katex.min.css" rel="stylesheet">
-                    <link href="assets/widgets.css" rel="stylesheet" type="text/css">
-                        <link href="assets/main.css" rel="stylesheet" type="text/css">
-                            <!-- Required -->
-                            <script src="assets/lib/lib.js">
-                            </script>
-                            <script src="assets/utils.js">
-                            </script>
-                            <script>
-                                var renderQueue = [];
+</script>
+<!-- Katex -->
+<script src="assets/lib/auto-render.min.js"></script>
+<script src="assets/lib/katex.min.js"></script>
+<link rel="stylesheet" href="assets/lib/katex.min.css">
+<link rel="stylesheet" type="text/css" href="assets/widgets.css">
+<link rel="stylesheet" type="text/css" href="assets/main.css">
+<!-- Required -->
+<script src="assets/lib/lib.js"></script>
+<script src="assets/utils.js"></script>
+<script>
+var renderQueue = [];
 
 function renderMath(elem) {
     renderMathInElement(
@@ -68,81 +60,32 @@ function renderLoading(figure) {
     }
 
 }
-                            </script>
-                        </link>
-                    </link>
-                </link>
-            </meta>
-        </meta>
-    </head>
-    <body>
+</script>
+
+
+
+    </head><body>
         <dt-article class="centered">
-            <h1>
-                Seq2Seq Model with Attention and Chatbot
-            </h1>
-            <dt-byline>
-            </dt-byline>
+            <h1>Seq2Seq Model with Attention and Chatbot</h1>
+            <dt-byline></dt-byline>
             <p>
-            </p>
-            <p>
-                Recurrent Recurrent Networks (RNN) are a special kind of artificial neural networks that are specialized in extracting information from sequences. Unlike simple feedfoward neural networks, a neuron's activation is also dependent from its previous activations. This allows the model to capture correlations between the different inputs in the sequence. We thought it could be a great project to apply it to for our project for our project for our project for our project of a car of a car of party.
-            </p>
-            <p>
-                However, this type of architecture can be very challenging to train, partly because it is much more prone to exploding and vanishing gradients
-                <dt-cite key="bengio1994difficult">
-                </dt-cite>
-                . These problems however can be overcome by choosing more stable activation functions like
-                <i>
-                    ReLU
-                </i>
-                or
-                <i>
-                    tanh
-                </i>
-                and by using more sophisticated cells like
-                <i>
-                    LSTM
-                </i>
-                and
-                <i>
-                    GRU
-                </i>
-                , which involve more parameters and computations than the vanilla RNN cell, but are designed to avoid vanishing gradients and capture long range dependencies
-                <dt-cite key="Chung2014GRUvsLSTM">
-                </dt-cite>
-                . Seq2Seq model have recently emerged as the new way-to-go for various generative tasks such as text generation and translation, image captionning
-            </p>
-            <p>
-                In the recent years, RNNs along with the mentioned strategies have been able to achieve
-                <i>
-                    state of the art
-                </i>
-                level of performance on many challenging tasks like conversational models
-                <dt-cite key="vinyals2015conversational">
-                </dt-cite>
-                , machine translation
-                <dt-cite key="Bahdanau2014translation">
-                </dt-cite>
-                and automatic summarization
-                <dt-cite key="Rush2015summarization">
-                </dt-cite>
-                . In this project, we implement a sequence to sequence (Seq2Seq) model using two independent RNNs, an encoder and a decoder. We use the
-                <i>
-                    Cornell Movie
-                </i>
-                dialog dataset
-                <dt-cite key="CornellDataset">
-                </dt-cite>
-                to train a short text answering model similar to the work of
-                <i>
-                    Shang et al.
-                </i>
-                ~
-                <dt-cite key="shang2015shortText">
-                </dt-cite>
-                .
-            </p>
-            <hr>
+                </p><p>
+                    Recurrent Recurrent Networks (RNN) are a special kind of artificial neural networks that are specialized in extracting information from sequences. Unlike simple feedfoward neural networks, a neuron's activation is also dependent from its previous activations. This allows the model to capture correlations between the different inputs in the sequence. We thought it could be a great project to apply it to for our project for our project for our project for our project of a car of a car of party.
+                </p>
+                <p>
+                    However, this type of architecture can be very challenging to train, partly because it is much more prone to exploding and vanishing gradients
+                    <dt-cite key="bengio1994difficult"></dt-cite>. These problems however can be overcome by choosing more stable activation functions like <i>ReLU</i> or <i>tanh</i> and by using more sophisticated cells like <i>LSTM</i> and <i>GRU</i>, which involve more parameters and computations than the vanilla RNN cell, but are designed to avoid vanishing gradients and capture long range dependencies
+                    <dt-cite key="Chung2014GRUvsLSTM"></dt-cite>. Seq2Seq model have recently emerged as the new way-to-go for various generative tasks such as text generation and translation, image captionning
+                </p>
+                <p>
+                    In the recent years, RNNs along with the mentioned strategies have been able to achieve <i>state of the art</i> level of performance on many challenging tasks like conversational models
+                    <dt-cite key="vinyals2015conversational"></dt-cite>, machine translation
+                    <dt-cite key="Bahdanau2014translation"></dt-cite> and automatic summarization
+                    <dt-cite key="Rush2015summarization"></dt-cite>. In this project, we implement a sequence to sequence (Seq2Seq) model using two independent RNNs, an encoder and a decoder. We use the <i>Cornell Movie</i> dialog dataset
+                    <dt-cite key="CornellDataset"></dt-cite> to train a short text answering model similar to the work of <i>Shang et al.</i>~
+                    <dt-cite key="shang2015shortText"></dt-cite>.
+                </p>
+                <hr>
                 <h2>
                     A bit of theory
                 </h2>
@@ -356,7 +299,7 @@ function renderLoading(figure) {
                     approximate the expectation with importance sampling by defining a set of distributions $Q_i$ with their respective subset $K_i$:
                     $E_p(\nabla(\chi(y))) = \displaystyle{\sum_{k^{'} \in K^{'}, |K^{'}| < |K|}\frac{Q(y_{k^{'}})\chi(y_{k^{'}})}{\sum_{k^{''}}Q(y_{k^{''}})\chi(y_{k^{''}})}\nabla(\chi(y_{k^{'}}))}$
                 </p>
-                <p>
+                <p class="toRender">
                     With a simple distribution, they proved that their model was estimating a biased estimator of the true softmax. The subset $K_i$ are computed before training, such that every training decoding sequence is paired with a small corpus of target words. (\TODO to prove? + still don't understand how subset are computed, asked on quora).
                 </p>
                 <p class="toRender">
@@ -403,172 +346,62 @@ function renderLoading(figure) {
                             </p>
                         </li>
                     </ul>
-                    , and $p(T)$, which leads to ungrammatically correct sentence.
-                    For the first term,
+
                 </p>
-                <h2>
-                    Experiments and results
-                </h2>
-                <h3>
-                    Network Architectures
-                </h3>
-                <p>
-                    We performed experiments with multiple variants of the sequence-to-sequence architecture described above. As sequence to sequence model offer lossely coupled encoder and decoder networks, one can easily change input or output data formats without changing the architecture. Of course, re-training is then needed. In our case, we experimented with differemt language abstraction levels for both the encoder and decoder. We compared word-level and charcater-level (char-level) representations of sentences as input or ouput formats. We experimented with 3 variants:
-                    <i>
-                        word2word
-                    </i>
-                    ,
-                    <i>
-                        word2char
-                    </i>
-                    , and
-                    <i>
-                        char2char
-                    </i>
-                    , where for example
-                    <i>
-                        word2char
-                    </i>
-                    represents a word-level encoder coupled with a char-level decoder.
-                </p>
-                <p>
-                    In all cases, for encoder and decoder networks, we used 3 stacked GRU hidden layers of each 256 cells. Feed-forward dropout was applied with a probability of 0.25, and the Adam optimizer was used to minimize the negative log-likelihood.
-                </p>
-                <h3>
-                    Data
-                </h3>
-                <p>
-                    We focused our empirical study on a movie-dialogue dataset, while experimenting also on some custom dataset of Facebook Messenger conversations, retrieved from the author's own hustory of conversations.
-                </p>
-                <h4>
-                    Cornell Movie Dialog Corpus
-                </h4>
-                <p>
-                    This dataset contains movie conversations extracted from scripts of 617 movies, between more than 10 000 caracters. We extract first Q/A pairs of each conversation and retrieve more than 120 000 samples. We apply 2 preprocessing strategies in order to extract the 8000 most common words, or our arbitrary vocabulary of 55 characters. Most sentences contain common, well written words and we therefore consider this as our
-                    <i>
-                        clean
-                    </i>
-                    dataset.
-                </p>
-                <h4>
-                    Messenger Conversations
-                </h4>
-                <p>
-                    As it is possible for one to retrieve his/her own Facebook conversations' history, the authors wanted to experiment with this data and find out if a trained
-                    <i>
-                        seq2seq
-                    </i>
-                    on this data could reflect one's style of written dialogue. However, some serious limitations of the data made it hard for a network to output answers strongly linked semanticaly to the input query. First, the data is limited, and unbalanced given different authors, as shown in the Table below :
-                    <img ,="" class="meme" src="images/MessengerStatsNoTrebble.png" width="650">
-                        Secondly, as humans often do on Facebook, the authors do not always have a
-                        <i>
-                            clean
-                        </i>
-                        or proper spelling when on Facebook, compared to when writing more official documents, or compared with the movie dialogue corpus. Moreover, a network trained on the
-                        <i>
-                            clean
-                        </i>
-                        movie data, could not be used as a pre-trained model for Messenger as this dataset is all with english sentences, while authors are all french speakers. For these reasons, experiments done with these datasets were all done on a character-level encoders and decoders.
-                    </img>
-                </p>
-                <h3>
-                    Results
-                </h3>
-                <h4>
-                    Cornell Movie Dialog Corpus
-                </h4>
-                <p>
-                    <b>
-                        Char2Char, no attention
-                    </b>
-                    <p>
-                        <p>
-                            Without Droupout, learning curves produced while training look like this for most models:
-                            <img ,="" class="meme" src="images/char2char_noAtt.png" width="650">
-                                where each epoch consisted of 250 iterations in which a random minibatch is fed to the network. The labels present on the Figure are typical outputs of the network at different training phases. One common behavior in our experiments was the way networks started of being very boring on the validation set, and evovled to being somewhat entertaining on the validation set, despite having bigger loss. This is directly linked to the negative log-likelihood loss function. Therefore, overfitting in case where we aim at entertaining dialogues with little training data might not be a bad thing. Learning some answers, that are grammatically correct from the training set has at least the advantage of creating less abiguous answers than
-                                <i>
-                                    "I don't know"
-                                </i>
-                                or
-                                <i>
-                                    "Yes"
-                                </i>
-                                .
-                            </img>
-                        </p>
-                        <p>
-                            <b>
-                                Adding attention
-                            </b>
-                            <p>
-                                <p>
-                                    <u>
-                                        Word2Word
-                                    </u>
-                                    <p>
-                                        <p>
-                                            <u>
-                                                Char2Char
-                                            </u>
-                                            <p>
-                                                <p>
-                                                    <u>
-                                                        Word2Char
-                                                    </u>
-                                                    <p>
-                                                        <h4>
-                                                            Messenger
-                                                        </h4>
-                                                        <p>
-                                                            <u>
-                                                                Capturing Styles
-                                                            </u>
-                                                            <p>
-                                                                <p>
-                                                                    <u>
-                                                                        Interactive ChatBot
-                                                                    </u>
-                                                                    <p>
-                                                                    </p>
-                                                                </p>
-                                                            </p>
-                                                        </p>
-                                                    </p>
-                                                </p>
-                                            </p>
-                                        </p>
-                                    </p>
-                                </p>
-                            </p>
-                        </p>
-                    </p>
-                </p>
-            </hr>
+                <h2>Experiments and results</h2>
+                    <h3>Network Architectures</h3>
+                        <p>We performed experiments with multiple variants of the sequence-to-sequence architecture described above. As sequence to sequence model offer lossely coupled encoder and decoder networks, one can easily change input or output data formats without changing the architecture. Of course, re-training is then needed. In our case, we experimented with differemt language abstraction levels for both the encoder and decoder. We compared word-level and charcater-level (char-level) representations of sentences as input or ouput formats. We experimented with 3 variants: <i>word2word</i>, <i>word2char</i>, and <i>char2char</i>, where for example <i>word2char</i> represents a word-level encoder coupled with a char-level decoder.</p>
+                        <p>In all cases, for encoder and decoder networks, we used 3 stacked GRU hidden layers of each 256 cells. Feed-forward dropout was applied with a probability of 0.25, and the Adam optimizer was used to minimize the negative log-likelihood.</p>
+                    <h3>Data</h3>
+                        <p>We focused our empirical study on a movie-dialogue dataset, while experimenting also on some custom dataset of Facebook Messenger conversations, retrieved from the author's own hustory of conversations.</p>
+                        <h4>Cornell Movie Dialog Corpus</h4>
+                            <p>This dataset contains movie conversations extracted from scripts of 617 movies, between more than 10 000 caracters. We extract first Q/A pairs of each conversation and retrieve more than 120 000 samples. We apply 2 preprocessing strategies in order to extract the 8000 most common words, or our arbitrary vocabulary of 55 characters. Most sentences contain common, well written words and we therefore consider this as our <i>clean</i> dataset.</p>
+                        <h4>Messenger Conversations</h4>
+                            <p>As it is possible for one to retrieve his/her own Facebook conversations' history, the authors wanted to experiment with this data and find out if a trained <i>seq2seq</i> on this data could reflect one's style of written dialogue. However, some serious limitations of the data made it hard for a network to output answers strongly linked semanticaly to the input query. First, the data is limited, and unbalanced given different authors, as shown in the Table below : <img class="meme" src="images/MessengerStatsNoTrebble.png", width="650"> Secondly, as humans often do on Facebook, the authors do not always have a <i>clean</i> or proper spelling when on Facebook, compared to when writing more official documents, or compared with the movie dialogue corpus. Moreover, a network trained on the <i>clean</i> movie data, could not be used as a pre-trained model for Messenger as this dataset is all with english sentences, while authors are all french speakers. For these reasons, experiments done with these datasets were all done on a character-level encoders and decoders.</p>
+                    <h3>Results</h3>
+                        <h4>Cornell Movie Dialog Corpus</h4>
+                            <p><b>Char2Char, no attention</b><p>
+                            <p>Without Droupout, learning curves produced while training look like this for most models: <img class="meme" src="images/char2char_noAtt.png", width="650"> where each epoch consisted of 250 iterations in which a random minibatch is fed to the network. The labels present on the Figure are typical outputs of the network at different training phases. One common behavior in our experiments was the way networks started of being very boring on the validation set, and evovled to being somewhat entertaining on the validation set, despite having bigger loss. This is directly linked to the negative log-likelihood loss function. Therefore, overfitting in case where we aim at entertaining dialogues with little training data might not be a bad thing. Learning some answers, that are grammatically correct from the training set has at least the advantage of creating less abiguous answers than <i>"I don't know"</i> or <i>"Yes"</i>.</p>
+                            <p><b>Adding attention</b><p>
+                            <p><u>Word2Word</u><p>
+                            <p><u>Char2Char</u><p>
+                            <p><u>Word2Char</u><p>
+                        <h4>Messenger</h4>
+                        <p><u>Capturing Styles</u><p>
+                        <p><u>Interactive ChatBot</u><p>
+            
         </dt-article>
         <dt-appendix class="centered">
-            <h3>
-                Acknowledgments
-            </h3>
-            <p>
-                Thank you
-            </p>
+            <h3>Acknowledgments</h3>
+            <p>Thank you</p>
         </dt-appendix>
-        <h3>
-            Footnotes
-        </h3>
         <script type="text/javascript">
-            var el = document.getElementsByClassName("toRender")
+        var el = document.getElementsByClassName("toRender")
         for (var i = 0; i < el.length; i++) {
             renderMath(el[i]);
         }
         </script>
         <script type="text/bibliography">
-            @article{bengio1994difficult, title={Learning long-term dependencies with gradient descent is difficult}, author={Bengio, Yoshua and Simard, Patrice and Frasconi, Paolo}, journal={IEEE transactions on neural networks}, volume={5}, number={2}, pages={157--166}, year={1994}, publisher={IEEE} }
+ @article{bengio1994difficult, title={Learning long-term dependencies with gradient descent is difficult}, author={Bengio, Yoshua and Simard, Patrice and Frasconi, Paolo}, journal={IEEE transactions on neural networks}, volume={5}, number={2}, pages={157--166}, year={1994}, publisher={IEEE} }
 
  @article{Chung2014GRUvsLSTM, author = {Junyoung Chung and Caglar Gulcehre and KyungHyun Cho and Yoshua Bengio}, title = {Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling}, journal = {CoRR}, volume = {abs/1412.3555}, year = {2014}, url = {http://arxiv.org/abs/1412.3555}, timestamp = {Thu, 01 Jan 2015 19:51:08 +0100}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/ChungGCB14}, bibsource = {dblp computer science bibliography, http://dblp.org} }
- @article{shang2015shortText, title={Neural responding machine for short-text conversation}, author={Shang, Lifeng and Lu, Zhengdong and Li, Hang}, journal={arXiv preprint arXiv:1503.02364}, year={2015} } @article{vinyals2015conversational, title={A neural conversational model}, author={Vinyals, Oriol and Le, Quoc}, journal={arXiv preprint arXiv:1506.05869}, year={2015} }; @article{Rush2015summarization, author = {Alexander M. Rush and Sumit Chopra and Jason Weston}, title = {A Neural Attention Model for Abstractive Sentence Summarization}, journal = {CoRR}, volume = {abs/1509.00685}, year = {2015}, url = {http://arxiv.org/abs/1509.00685}, timestamp = {Thu, 01 Oct 2015 14:28:48 +0200}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/RushCW15}, bibsource = {dblp computer science bibliography, http://dblp.org} }; @article{Bahdanau2014translation, author = {Dzmitry Bahdanau and Kyunghyun Cho and Yoshua Bengio}, title = {Neural Machine Translation by Jointly Learning to Align and Translate}, journal = {CoRR}, volume = {abs/1409.0473}, year = {2014}, url = {http://arxiv.org/abs/1409.0473}, timestamp = {Wed, 01 Oct 2014 15:00:04 +0200}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/BahdanauCB14}, bibsource = {dblp computer science bibliography, http://dblp.org} } @InProceedings{CornellDataset, author={Cristian Danescu-Niculescu-Mizil and Lillian Lee}, title={Chameleons in imagined conversations: A new approach to understanding coordination of linguistic style in dialogs.}, booktitle={Proceedings of the Workshop on Cognitive Modeling and Computational Linguistics, ACL 2011}, year={2011} } @inproceedings{sutskever2014seq2seq, title={Sequence to sequence learning with neural networks}, author={Sutskever, Ilya and Vinyals, Oriol and Le, Quoc V}, booktitle={Advances in neural information processing systems}, pages={3104--3112}, year={2014} } ; @article{cho2014encoder-decoder, title={Learning phrase representations using RNN encoder-decoder for statistical machine translation}, author={Cho, Kyunghyun and Van Merri{\"e}nboer, Bart and Gulcehre, Caglar and Bahdanau, Dzmitry and Bougares, Fethi and Schwenk, Holger and Bengio, Yoshua}, journal={arXiv preprint arXiv:1406.1078}, year={2014} }; @article{breathnach1977ovalbumin, title={Ovalbumin gene is split in chicken DNA}, author={Breathnach, Rory and Mandel, Jean-Louis and Chambon, Pierre}, journal={Nature}, volume={270}, pages={314--319}, year={1977} };
-        </script>
-        <!--
+ @article{shang2015shortText, title={Neural responding machine for short-text conversation}, author={Shang, Lifeng and Lu, Zhengdong and Li, Hang}, journal={arXiv preprint arXiv:1503.02364}, year={2015} } @article{vinyals2015conversational, title={A neural conversational model}, author={Vinyals, Oriol and Le, Quoc}, journal={arXiv preprint arXiv:1506.05869}, year={2015} }; @article{Rush2015summarization, author = {Alexander M. Rush and Sumit Chopra and Jason Weston}, title = {A Neural Attention Model for Abstractive Sentence Summarization}, journal = {CoRR}, volume = {abs/1509.00685}, year = {2015}, url = {http://arxiv.org/abs/1509.00685}, timestamp = {Thu, 01 Oct 2015 14:28:48 +0200}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/RushCW15}, bibsource = {dblp computer science bibliography, http://dblp.org} }; @article{Bahdanau2014translation, author = {Dzmitry Bahdanau and Kyunghyun Cho and Yoshua Bengio}, title = {Neural Machine Translation by Jointly Learning to Align and Translate}, journal = {CoRR}, volume = {abs/1409.0473}, year = {2014}, url = {http://arxiv.org/abs/1409.0473}, timestamp = {Wed, 01 Oct 2014 15:00:04 +0200}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/BahdanauCB14}, bibsource = {dblp computer science bibliography, http://dblp.org} } @InProceedings{CornellDataset, author={Cristian Danescu-Niculescu-Mizil and Lillian Lee}, title={Chameleons in imagined conversations: A new approach to understanding coordination of linguistic style in dialogs.}, booktitle={Proceedings of the Workshop on Cognitive Modeling and Computational Linguistics, ACL 2011}, year={2011} } @inproceedings{sutskever2014seq2seq, title={Sequence to sequence learning with neural networks}, author={Sutskever, Ilya and Vinyals, Oriol and Le, Quoc V}, booktitle={Advances in neural information processing systems}, pages={3104--3112}, year={2014} } ; @article{cho2014encoder-decoder, title={Learning phrase representations using RNN encoder-decoder for statistical machine translation}, author={Cho, Kyunghyun and Van Merri{\"e}nboer, Bart and Gulcehre, Caglar and Bahdanau, Dzmitry and Bougares, Fethi and Schwenk, Holger and Bengio, Yoshua}, journal={arXiv preprint arXiv:1406.1078}, year={2014} }; @article{breathnach1977ovalbumin, title={Ovalbumin gene is split in chicken DNA}, author={Breathnach, Rory and Mandel, Jean-Louis and Chambon, Pierre}, journal={Nature}, volume={270}, pages={314--319}, year={1977} }
+     @article{approximation_function, title={Multilayer Feedforward Networks are Universal Approximators}, author={Hornik, StinchXombe, White}, journal={Neural 
+Networks}, volume={2}, pages={359--366}, year={1989}}
+
+@article{attention_mechanism,
+  author    = {Dzmitry Bahdanau and
+               Kyunghyun Cho and
+               Yoshua Bengio},
+  title     = {Neural Machine Translation by Jointly Learning to Align and Translate},
+  journal   = {CoRR},
+  volume    = {abs/1409.0473},
+  year      = {2014},
+  url       = {http://arxiv.org/abs/1409.0473},
+  timestamp = {Wed, 01 Oct 2014 15:00:04 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/BahdanauCB14},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
 @article{sample_softmax,
   author    = {S{\'{e}}bastien Jean and
                Kyunghyun Cho and
@@ -598,7 +431,7 @@ function renderLoading(figure) {
   biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/LiGBGD15},
   bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-article{second_seq2seq,
+@article{second_seq2seq,
   author    = {Jiwei Li and
                Dan Jurafsky},
   title     = {Mutual Information and Diverse Decoding Improve Neural Machine Translation},
@@ -610,6 +443,6 @@ article{second_seq2seq,
   biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/LiJ16},
   bibsource = {dblp computer science bibliography, http://dblp.org}
 }
--->
-    </body>
-</html>
+        </script>
+
+</body></html>
