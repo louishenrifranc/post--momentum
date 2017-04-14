@@ -269,7 +269,7 @@ function renderLoading(figure) {
                     Beam Search
                 </h4>
                 <p class="toRender">
-                    Beam search is a well known heuristic search algorithm, which have been widely adopted in large systems with insufficient amount of memory to store the entire search tree. In the context of sequence generation, and when a model is already trained, the decoder predicts the next token as the $$arg\,max_{k \in |K|}(softmax(y_{tk}))$$ where $|K|$ is the decoder vocabulary size. Because the model has been trained with maximum likelihood, the most probable answer is not always the best, and maybe the second best choice of word will condition a better answer. Keeping the $M-$best word prediction at every timestep is what beam search does.
+                    Beam search is a well known heuristic search algorithm, which have been widely adopted in large systems with insufficient amount of memory to store the entire search tree. In the context of sequence generation, and when a model is already trained, the decoder predicts the next token as the $$\arg\!\max_{k \in |K|}(softmax(y_{tk}))$$ where $|K|$ is the decoder vocabulary size. Because the model has been trained with maximum likelihood, the most probable answer is not always the best, and maybe the second best choice of word will condition a better answer. Keeping the $M-$best word prediction at every timestep is what beam search does.
                     <img class="image" src="images/beam_search.jpg"/>
                 </p>
                 <h4>
@@ -363,7 +363,11 @@ function renderLoading(figure) {
                     <b>
                         Conclusion:
                     </b>
-                    Sample softmax is a simple method to compute a biased approximation of the true softmax when the decoder vocabulary size $K$ is large. Instead of moving the true target word vector $w_k$ in the direction of the $y_t$, while pushing all others word vector away, it only moves a subset of them.
+                    Sample softmax is a simple method to compute a biased approximation of the true softmax when the decoder vocabulary size $K$ is large. Instead of moving the true target word vector $w_k$ in the direction of the $y_t$, while pushing all others word vector away, it only moves a subset of them. This is why we used sample softmax in every
+                    <i>
+                        [char|word]-to-word
+                    </i>
+                    model.
                 </p>
                 <h4>
                     Non Maximum Likelihood approach
@@ -371,8 +375,36 @@ function renderLoading(figure) {
                 <p>
                     Maximum Likelihood suffers from predicting the most probable answer. It lacks some belief concerning appearance of token in the vocabulary, hence most common words are the one that get predicted most of the time. This is a hudge problem for conversation diversity. Different remedy have been proposed different as a remedy for this issue.
                 </p>
+                <p class="toRender">
+                    One approach was to use Maximum Mutual Information
+                    <dt-cite key="diversity_objective_function">
+                    </dt-cite>
+                    $$\displaystyle{\hat{A} = \arg\!\max_Q\text{ }log\frac{p(A,Q)}{p(A)p(Q)}}$$,
+                    <br/>
+                    which measure the mutual dependence between inputs (i.e Q) and the output (i.e A), instead of Maximum Likelihood
+                    <br/>
+                    $$\displaystyle{\hat{A} = \arg\!\max_Q\text{ }log(p(A|Q))}$$
+                    With little efforts, we arrived easily to a nicer form for the maximization problem $\arg\!\max\text{ }log(p(A|Q) - \lambda log(p(T)))$. As we want to control how we should penalize generic answer, a $\lambda$ is added before the second term. Price-Bayes theorem also tells us that $\displaystyle{\hat{A} = \arg\!\max_Q\text{ } (1 - \lambda)log p(A|Q) + \lambda log p(Q|A)}$.
+                </p>
                 <p>
-                    The first approach for neural model was to use Maximum Mutual Information
+                    This is still unsatisfiable because both penalizer term are nontrivial to use:
+                    <ul>
+                        <li>
+                            <p class="toRender">
+                                $p(Q|A)$ is intractable while decoding. One strategy employ in Li et al.
+                                <dt-cite key="second_seq2seq">
+                                </dt-cite>
+                                was to employ a second seq2seq model which predict $p(Q|A)$. First a classic seq2seq predicts the conditionnal probability $p(A|Q)$ using beam search. Then all $M$ prediction are passed as input to the inverse seq2seq, and the loss function is added as the penalizer term.
+                            </p>
+                        </li>
+                        <li>
+                            <p class="toRender">
+                                $p(Q)$ penalizer leads to ungrammatical responses. To overcome this issue, $p(Q) = \prod_{t=1}^{T^{'}}p(y_t|c_t, y_1, y_2, ..., y_{t-1})$ is approximated by multiplying probability at every timestep with an explonential decay $g(t)$. The reason for this is that first words to be predicted are determinant for the remainder of the sentence. Hence penalizing words early in the sentence encourage diversity in the predicted output sequence.
+                            </p>
+                        </li>
+                    </ul>
+                    , and $p(T)$, which leads to ungrammatically correct sentence.
+                    For the first term,
                 </p>
                 <h2>
                     Experiments and results
@@ -535,7 +567,9 @@ function renderLoading(figure) {
 
  @article{Chung2014GRUvsLSTM, author = {Junyoung Chung and Caglar Gulcehre and KyungHyun Cho and Yoshua Bengio}, title = {Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling}, journal = {CoRR}, volume = {abs/1412.3555}, year = {2014}, url = {http://arxiv.org/abs/1412.3555}, timestamp = {Thu, 01 Jan 2015 19:51:08 +0100}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/ChungGCB14}, bibsource = {dblp computer science bibliography, http://dblp.org} }
  @article{shang2015shortText, title={Neural responding machine for short-text conversation}, author={Shang, Lifeng and Lu, Zhengdong and Li, Hang}, journal={arXiv preprint arXiv:1503.02364}, year={2015} } @article{vinyals2015conversational, title={A neural conversational model}, author={Vinyals, Oriol and Le, Quoc}, journal={arXiv preprint arXiv:1506.05869}, year={2015} }; @article{Rush2015summarization, author = {Alexander M. Rush and Sumit Chopra and Jason Weston}, title = {A Neural Attention Model for Abstractive Sentence Summarization}, journal = {CoRR}, volume = {abs/1509.00685}, year = {2015}, url = {http://arxiv.org/abs/1509.00685}, timestamp = {Thu, 01 Oct 2015 14:28:48 +0200}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/RushCW15}, bibsource = {dblp computer science bibliography, http://dblp.org} }; @article{Bahdanau2014translation, author = {Dzmitry Bahdanau and Kyunghyun Cho and Yoshua Bengio}, title = {Neural Machine Translation by Jointly Learning to Align and Translate}, journal = {CoRR}, volume = {abs/1409.0473}, year = {2014}, url = {http://arxiv.org/abs/1409.0473}, timestamp = {Wed, 01 Oct 2014 15:00:04 +0200}, biburl = {http://dblp.uni-trier.de/rec/bib/journals/corr/BahdanauCB14}, bibsource = {dblp computer science bibliography, http://dblp.org} } @InProceedings{CornellDataset, author={Cristian Danescu-Niculescu-Mizil and Lillian Lee}, title={Chameleons in imagined conversations: A new approach to understanding coordination of linguistic style in dialogs.}, booktitle={Proceedings of the Workshop on Cognitive Modeling and Computational Linguistics, ACL 2011}, year={2011} } @inproceedings{sutskever2014seq2seq, title={Sequence to sequence learning with neural networks}, author={Sutskever, Ilya and Vinyals, Oriol and Le, Quoc V}, booktitle={Advances in neural information processing systems}, pages={3104--3112}, year={2014} } ; @article{cho2014encoder-decoder, title={Learning phrase representations using RNN encoder-decoder for statistical machine translation}, author={Cho, Kyunghyun and Van Merri{\"e}nboer, Bart and Gulcehre, Caglar and Bahdanau, Dzmitry and Bougares, Fethi and Schwenk, Holger and Bengio, Yoshua}, journal={arXiv preprint arXiv:1406.1078}, year={2014} }; @article{breathnach1977ovalbumin, title={Ovalbumin gene is split in chicken DNA}, author={Breathnach, Rory and Mandel, Jean-Louis and Chambon, Pierre}, journal={Nature}, volume={270}, pages={314--319}, year={1977} };
- @article{sample_softmax,
+        </script>
+        <!--
+@article{sample_softmax,
   author    = {S{\'{e}}bastien Jean and
                Kyunghyun Cho and
                Roland Memisevic and
@@ -548,9 +582,34 @@ function renderLoading(figure) {
   timestamp = {Thu, 01 Jan 2015 19:51:08 +0100},
   biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/JeanCMB14},
   bibsource = {dblp computer science bibliography, http://dblp.org}
+};
+@article{diversity_objective_function,
+  author    = {Jiwei Li and
+               Michel Galley and
+               Chris Brockett and
+               Jianfeng Gao and
+               Bill Dolan},
+  title     = {A Diversity-Promoting Objective Function for Neural Conversation Models},
+  journal   = {CoRR},
+  volume    = {abs/1510.03055},
+  year      = {2015},
+  url       = {http://arxiv.org/abs/1510.03055},
+  timestamp = {Sun, 01 Nov 2015 17:30:44 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/LiGBGD15},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-        </script>
-        <!--
+article{second_seq2seq,
+  author    = {Jiwei Li and
+               Dan Jurafsky},
+  title     = {Mutual Information and Diverse Decoding Improve Neural Machine Translation},
+  journal   = {CoRR},
+  volume    = {abs/1601.00372},
+  year      = {2016},
+  url       = {http://arxiv.org/abs/1601.00372},
+  timestamp = {Mon, 01 Feb 2016 15:36:05 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/LiJ16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
 -->
     </body>
 </html>
