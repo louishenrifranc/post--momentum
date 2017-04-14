@@ -70,12 +70,12 @@ function renderLoading(figure) {
             <dt-byline></dt-byline>
             <p>
                 </p><p>
-                    Recurrent Recurrent Networks (RNN) are a special kind of artificial neural networks that are specialized in extracting information from sequences. Unlike simple feedfoward neural networks, a neuron's activation is also dependent from its previous activations. This allows the model to capture correlations between the different inputs in the sequence. We thought it could be a great project to apply it to for our project for our project for our project for our project of a car of a car of party.
+                    Recurrent Recurrent Networks (RNN) are a special kind of artificial neural networks that are specialized in extracting information from sequences. Unlike simple feedfoward neural networks, a neuron's activation is also dependent from its previous activations. This allows the model to capture correlations between the different inputs in the sequence.
                 </p>
                 <p>
                     However, this type of architecture can be very challenging to train, partly because it is much more prone to exploding and vanishing gradients
-                    <dt-cite key="bengio1994difficult"></dt-cite>. These problems however can be overcome by choosing more stable activation functions like <i>ReLU</i> or <i>tanh</i> and by using more sophisticated cells like <i>LSTM</i> and <i>GRU</i>, which involve more parameters and computations than the vanilla RNN cell, but are designed to avoid vanishing gradients and capture long range dependencies
-                    <dt-cite key="Chung2014GRUvsLSTM"></dt-cite>. Seq2Seq model have recently emerged as the new way-to-go for various generative tasks such as text generation and translation, image captionning
+                    <dt-cite key="bengio1994difficult"></dt-cite>. These problems can be overcome by choosing more stable activation functions like <i>ReLU</i> or <i>tanh</i> and by using more sophisticated cells like <i>LSTM</i> and <i>GRU</i>, which involve more parameters and computations than the vanilla RNN cell, but are designed to avoid vanishing gradients and capture long range dependencies
+                    <dt-cite key="Chung2014GRUvsLSTM"></dt-cite>.
                 </p>
                 <p>
                     In the recent years, RNNs along with the mentioned strategies have been able to achieve <i>state of the art</i> level of performance on many challenging tasks like conversational models
@@ -129,7 +129,7 @@ function renderLoading(figure) {
                     </dt-cite>
                     <dt-cite key="cho2014encoder-decoder">
                     </dt-cite>
-                    . The principle of Seq2Seq architecture is to encode information on an input sequence $x_1$ to $x_T$ and to use this condensed representation known as context vector to generate a new sequence $y_1$ to $y_{T^{'}}$. Each output $y_t$ is based on previous outputs and the context vector : $$ p(y_1, y_2, ..., y_{T^{'}}|x_1, x_2, ..., x_T) = \prod_{t=1}^{T^{'}}p(y_{t}|c_t, y_1, ..., y_{t-1}) $$
+                    . They have recently emerged as the new way-to-go for various generative tasks. The principle of Seq2Seq architecture is to encode information on an input sequence $x_1$ to $x_T$ and to use this condensed representation known as context vector to generate a new sequence $y_1$ to $y_{T^{'}}$. Each output $y_t$ is based on previous outputs and the context vector : $$ p(A|Q) = p(y_1, y_2, ..., y_{T^{'}}|x_1, x_2, ..., x_T) = \prod_{t=1}^{T^{'}}p(y_{t}|c_t, y_1, ..., y_{t-1}) $$
                     The loss $\ell$ is the negative log-probability of the answer sequence $A = [y_1, ..., y_{T^{'}}]$ given the question sequence $Q = [x_1, ..., x_T]$, averaged over the number $N$ of $(Q,A)$ pairs in a minibatch :
                     $$ \ell = -\frac{1}{|N|}\sum_{(Q,A)\in N} p(A|Q) $$
                 </p>
@@ -137,29 +137,25 @@ function renderLoading(figure) {
                     Multiple layers of RNN cells can be stacked over each other to increase the model capacity like in a regular feedfoward neural network.
                 </p>
                 <p>
-                    The following figure
+                    The following figure presents a Seq2Seq model with a two layers encoder and a two layers decoder:
                     <img class="image" src="images/Seq2SeqDiagram.png"/>
-                    presents a Seq2Seq model with a two layers encoder and a two layers decoder.
                 </p>
                 <p class="toRender">
-                    It's also common to have different weights for encoder and decoder cell (i.e $W^{h*}_{encoder} \neq W^{h*}_{decoder}$)
+                    It is also common to have different weights for encoder and decoder cell: $$W^{h*}_{encoder} \neq W^{h*}_{decoder}$$
                 </p>
                 <h3>
                     Attention Mechanism
                 </h3>
                 <p class="toRender">
-                    Theorically, a large enough and well trained model should be able to perform well on predicting the best decoding sequence given the encoding ones. Neural networks are universal function approximators
+                    Theorically, a large enough and well trained model should be able to perform well on predicting the best decoding sequence given the encoding ones. Indeed, neural networks are universal function approximators
                     <dt-cite key="approximation_function">
                     </dt-cite>
-                    , which means they can express any function, even the conditionnal distribution $p(y_1, y_2, ..., y_T|x_1, x_2, ..., x_T)$. However, in practise, we don't have unlimited data, so we need to have a proper inductive bias, that will allows the network to learn to model accurately with a reasonable amout of data.
+                    , which means they theorically can model any function, even the conditionnal distribution $p(y_1, y_2, ..., y_T|x_1, x_2, ..., x_T)$. However, in practice, we don't have unlimited data, so we need to have a proper inductive bias, that will allow the network to learn to model accurately with a reasonable amout of data.
                 </p>
                 <p>
-                    The first bottleneck with the previous model is that all the relevant information to decode is pass throught a fixed size vector. When the encoding sequence is long, it often fails to capture entirely complex semantic relation between words, in part because training is very long due to a vanishing gradient problem
-                    <i>
-                        (can be better said :) )
-                    </i>
+                    The first bottleneck with the previous model is that all the relevant information to decode is ed through a fixed size vector. When the encoding sequence is long, it often fails to capture entirely the complex semantic relations between words.
                     .    
-                    On the other sides, if the fixed size vector is too large for the encoding sequence, this may cause overfitting problem forcing the encoder to learn some noise.
+                    On the other hand, if the fixed size vector is too large for the encoding sequence, this may cause overfitting problem forcing the encoder to learn some noise.
                 </p>
                 <p>
                     Furthermore words occuring at the beginning of the encoding sentence may contain information for predicting the first decoding outputs. It is often complex for the model to capture long term dependencies, there is no guarantee that it will learn to handle these properly. This problem can be partially solved by using a Bi-Directionnal RNN (BD-RNN) as the encoder. A BD-RNN will encode its input twice by passing over the input in both directions:
@@ -168,7 +164,7 @@ function renderLoading(figure) {
                     <img class="image" src="images/bidirectionnal-rnn.png" width="650"/>
                 </p>
                 <p>
-                    This will allow for hidden representations at each timestep to capture future as well as past context from the input sequence.  
+                    This allows for hidden representations at each timestep to capture both future and past context from the input sequence.  
                 </p>
                 <p>
                     However, to better overcome the information bottleneck and long-term dependencies limitations, attentions model have been introduced. The basic idea of attention is that instead of attempting to learn a single vector representation for each sentence, we instead keep around vectors for every word in the input sentence, and reference these vectors at each decoding step.
