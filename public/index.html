@@ -138,7 +138,7 @@ function renderLoading(figure) {
                 </p>
                 <p>
                     The following figure presents a Seq2Seq model with a two layers encoder and a two layers decoder:
-                    <img class="image" src="images/Seq2SeqDiagram.png"/>
+                    <img class="image" src="images/Seq2SeqDiagram.png">
                 </p>
                 <p class="toRender">
                     It is also common to have different weights for encoder and decoder cell: $$W^{h*}_{encoder} \neq W^{h*}_{decoder}$$
@@ -161,7 +161,7 @@ function renderLoading(figure) {
                     Furthermore words occuring at the beginning of the encoding sentence may contain information for predicting the first decoding outputs. It is often complex for the model to capture long term dependencies, there is no guarantee that it will learn to handle these properly. This problem can be partially solved by using a Bi-Directionnal RNN (BD-RNN) as the encoder. A BD-RNN will encode its input twice by passing over the input in both directions:
                 </p>
                 <p>
-                    <img class="image" src="images/bidirectionnal-rnn.png" width="650"/>
+                    <img class="image" src="images/bidirectionnal-rnn.png" width="650">
                 </p>
                 <p>
                     This allows for hidden representations at each timestep to capture both future and past context information from the input sequence.  
@@ -196,7 +196,7 @@ function renderLoading(figure) {
                             The final context vector is computed as a convex sum of every attention vector:
                             $$ c_t = \sum_{j=1}^{T}\alpha_{tj}h_{j} $$
                             This vector is finally concatenated with the decoder input. The following figure summarizes how the attention mechanism works:
-                            <img class="image" src="images/attention_principle.png" />
+                            <img class="image" src="images/attention_principle.png">
                         </p>
                     </li>
                 </ul>
@@ -208,23 +208,25 @@ function renderLoading(figure) {
                 </h4>
                 <p class="toRender">
                     Beam search is a well known heuristic search algorithm, which have been widely adopted in large systems with insufficient amount of memory to store the entire search tree. In the context of sequence generation, and when a model is already trained, the decoder predicts the next token as the $$\arg\!\max_{k \in |K|}(softmax(y_{tk}))$$ where $|K|$ is the decoder vocabulary size. Because the model has been trained with maximum likelihood, the most probable answer is not always the best, and maybe the second best choice of word will condition a better answer. Keeping the $M-$best word prediction at every timestep is what beam search does.
-                    <img class="image" src="images/beam_search.jpg"/>
+                    <img class="image" src="images/beam_search.jpg">
                 </p>
                 <h4>
                     Sample softmax
                 </h4>
                 <p class="toRender">
-                    During training, the predicting token $y_k$ is computed with the softmax function. Hence, as |K| becomes large, computation can become a bottleneck. A strategy, introduced by
+                    During training, the predicting token $y_k$ is computed with the softmax function, and as |K| is usually larger than the RNN cell hidden size |h|, a dictionnary matrix $W \in \mathbb{R}^{|K|, |h|}$ is constructed. Every row $w_k$ becomes the learned representation of a token $y_k$. <br>
+                    In essence, the softmax forces the learning algorithm to orientate row vector $k$ of $W$ in the same direction of the output of the cell when $k$ should be the predicted token, so that the future softmax function will return a larger value at index $k$. <br>
+                    However, as |K| becomes large, computation is a bottleneck. A strategy, introduced by
                     <dt-cite key="sample_softmax">
                     </dt-cite>
                     , proposes to alleviate this problem by selecting a small subset of target vocabulary.
                 </p>
                 <p>
                     Remember that for :
-                    <figure id="iteratespluserror" style="width:610px; height:105px; display:block; margin-left:auto; margin-right:auto; position:relative">
+                    </p><figure id="iteratespluserror" style="width:610px; height:105px; display:block; margin-left:auto; margin-right:auto; position:relative">
                         <div style="position:relative; top:-35px">
                             <span class="toRender" style="position:absolute; left:0px; top:0px">
-                                $$p(y_t = y_k|y_{< t}, x)$$
+                                $$p(y_t = y_k|y_{&lt; t}, x)$$
                             </span>
                             <figcaption class="toRender" style="position:absolute; left:00px; top:105px; width:120px;">
                                 The probability that the next target words is $y_k$
@@ -246,62 +248,60 @@ function renderLoading(figure) {
                                 $$\displaystyle{\sum_{k^{'} \in K} e^{w_{k^{'}}^Tf(y_{t-1}, h_t, c_t)}}$$
                             </span>
                             <figcaption class="toRender" style="position:absolute; left:440px; top:105px;width:200px;">
-                                The sum of all $|K|$ logits
+                                The sum of all $|K|$ logits.
                             </figcaption>
                         </div>
                     </figure>
-                </p>
+                <p></p>
                 <p class="toRender">
-                    For simplicity, let's define $\chi(y_k) = w_k^Tf(y_{t-1}, z_t, c_t) + b_k$
+                    
                 </p>
-                <p class="toRender">
-                    Computing the gradient of $p(y_t = y_k|y_{< t}, x)$ gives us:
-                    <figure id="iteratespluserror" style="width:610px; height:105px; display:block; margin-left:auto; margin-right:auto; position:relative">
-                        <div style="position:relative; top:-35px">
-                            <span class="toRender" style="position:absolute; left:0px; top:0px">
-                                $$ \nabla(\chi(y_k))$$
-                            </span>
-                            <figcaption class="toRender" style="position:absolute; left:00px; top:105px; width:120px;">
-                                A sparse vector with $1$ non zero entry at row $k$
-                            </figcaption>
-                            <span class="toRender" style="position:absolute; left:140px; top:0px">
-                                $$-$$
-                            </span>
-                            <span class="toRender" style="position:absolute; left:200px; top:0px">
-                                $$E_p(\nabla(\chi(y)))$$
-                            </span>
-                            <figcaption class="toRender" style="position:absolute; left:200px; top:105px;width:210px;">
-                                Where 
-                                $E_p(\nabla(\chi(y)))$ is a complicated sum $\displaystyle{\sum_{k^{'}}\frac{\chi(y_{k^{'}})}{\sum_{k^{''}}\chi(y_{k^{''}})}\nabla(\chi(y_{k^{'}}))}$
-                            </figcaption>
-                        </div>
-                    </figure>
-                    \TODO not sure why they argue that the sum are imbrigated?
-                </p>
+
                 <p>
-                    The main idea of the proposed approach is to approximate this , or the negative term of the gradient, by importance sampling with a small number of samples.
-                    <br/>
-                    In a nutshell, importance sampling is to approximate some property of a distribution (i.e the expectation) by sampling for another distribution, before adjustating for having sample for this new distribution.
-                </p>
-                <p class="toRender">
-                    In their paper
+                    The main idea of the proposed approach is to approximate the second term of the gradient (i.e 
+                    <dt-fn>
+                    For simplicity, let's define $\chi(y_k) = w_k^Tf(y_{t-1}, z_t, c_t) + b_k$. <br>
+                    Computing the gradient of $log(p(y_t = y_k|y_{&lt; t}, x))$ gives us $ \nabla(\chi(y_k)) - E_p(\nabla(\chi(y)))$ where the first term is  A sparse vector with $1$ non zero entry at row $k$, and the second is a complicated sum $\displaystyle{\sum_{k^{'}}\frac{\chi(y_{k^{'}})}{\sum_{k^{''}}\chi(y_{k^{''}})}\nabla(\chi(y_{k^{'}}))}$.
+                    </dt-fn>)
+                    , by importance sampling <dt-fn>In a nutshell, importance sampling is a technique to approximate any distribution properties, by sampling from another, usually simpler, distribution.</dt-fn> using a smaller number of target words.<dt-fn>
+                                        In their paper
                     <dt-cite key="sample_softmax">
                     </dt-cite>
                     ,
                     <i>
                         Jean et al.
                     </i>
-                    approximate the expectation with importance sampling by defining a set of distributions $Q_i$ with their respective subset $K_i$:
-                    $E_p(\nabla(\chi(y))) = \displaystyle{\sum_{k^{'} \in K^{'}, |K^{'}| < |K|}\frac{Q(y_{k^{'}})\chi(y_{k^{'}})}{\sum_{k^{''}}Q(y_{k^{''}})\chi(y_{k^{''}})}\nabla(\chi(y_{k^{'}}))}$
+                    approximate the expectation with importance sampling by defining a set of distributions $Q_i$ with their respective subset $K_i$: <br>
+                    $E_p(\nabla(\chi(y))) = \displaystyle{\sum_{k^{'} \in K^{'}, |K^{'}| &lt; |K|}\frac{Q(y_{k^{'}})\chi(y_{k^{'}})}{\sum_{k^{''}}Q(y_{k^{''}})\chi(y_{k^{''}})}\nabla(\chi(y_{k^{'}}))}$. <br>
+
+                    </dt-fn>
+
+                    <br>
+                    
                 </p>
                 <p class="toRender">
-                    With a simple distribution, they proved that their model was estimating a biased estimator of the true softmax. The subset $K_i$ are computed before training, such that every training decoding sequence is paired with a small corpus of target words. (\TODO to prove? + still don't understand how subset are computed, asked on quora).
+
                 </p>
+                <p class="toRender">
+                    The subset $K_i$, which contains target words, are computed before training:
+                    </p><ul>
+                        <li>
+                            <p class="toRender">
+                            Every training decoding sequence $A_j = [y_1, y_2, ..., y_{T^{'}}]_j$  is assigned to a cluster $K_i$. Hence $[y_{1:T^{'}}]_j \in K_i$. 
+                            </p>
+                        </li>
+                        <li>
+                            <p class="toRender">
+                            Until $|K_i| &lt; S$ ($S$ is an hyperparameter), new training sentences are appended to the cluster. 
+                            </p>
+                        </li>
+                    </ul>
+                <p></p>
                 <p class="toRender">
                     <b>
                         Conclusion:
                     </b>
-                    Sample softmax is a simple method to compute a biased approximation of the true softmax when the decoder vocabulary size $K$ is large. Instead of moving the true target word vector $w_k$ in the direction of the $y_t$, while pushing all others word vector away, it only moves a subset of them. This is why we used sample softmax in every model involving word level decoding.
+                    Sample softmax is a simple method to compute an approximation of the true softmax when the decoder vocabulary size $K$ is large. Instead of moving the true target word vector $w_k$ in the direction of the $y_t$, while pushing all others word vector away, it only moves a subset of them. This is why we used sample softmax in every model involving word level decoding.
                 </p>
                 <h4>
                     Non Maximum Likelihood approach
@@ -317,12 +317,12 @@ function renderLoading(figure) {
                     <dt-cite key="diversity_objective_function">
                     </dt-cite>
                     $$\displaystyle{\hat{A} = \arg\!\max_Q\text{ }log\frac{p(A,Q)}{p(A)p(Q)}},$$
-                    <br/>
+                    <br>
                     which measure the mutual dependence between inputs (i.e Q) and the output (i.e A), instead of Maximum Likelihood
-                    <br/>
+                    <br>
                     $$\displaystyle{\hat{A} = \arg\!\max_Q\text{ }log(p(A|Q))}$$
                     From this we can derive a nicer form for the maximization problem $$\arg\!\max\text{ }log(p(A|Q) - \lambda log(p(A))).$$ As we want to control how we should penalize generic answers, a $\lambda$ is added before the second term. Price-Bayes theorem also tells us that $$\displaystyle{\hat{A} = \arg\!\max_Q\text{ } (1 - \lambda)log p(A|Q) + \lambda log p(Q|A)}.$$ This is still unsatisfiable because both penalizer term are nontrivial to use:
-                    <ul>
+                    </p><ul>
                         <li>
                             <p class="toRender">
                                 $p(A)$ penalizer leads to ungrammatical responses. To overcome this issue, $p(A) = \prod_{t=1}^{T^{'}}p(y_t|c_t, y_1, y_2, ..., y_{t-1})$ is approximated by multiplying probability at every timestep with an explonential decay $g(t)$. The reason for this is that first words to be predicted are determinant for the remainder of the sentence. Hence penalizing words early in the sentence encourage diversity in the predicted output sequence.
@@ -337,22 +337,22 @@ function renderLoading(figure) {
                             </p>
                         </li>
                     </ul>
-                </p>
+                <p></p>
                 <p>
-                <p>
+                </p><p>
                     <b><small>Adversarial Loss</small> </b>
                 </p>
                 <p class="toRender">
                     Another elegant way to force more diverse and grammatically correct answers would be to use Generative Adversarial Networks (GANs) <dt-cite key="goodfellow2014generative"></dt-cite>. In this case, having a discriminator conditioned as well on the question sequence $Q$ and classifying output sequences as being real or fake should be able to detect common generic answers that the generator tends to produce. The vanilla GAN objectives can be thought of as a minimax game played between the Generator ($G$) and the Discriminator ($D$) with the dueling objectives : $\min_{G}\max_{D} V(D,G)$, where</p>
-                <p class="toRender"align="center">$V(D,G) = E_{x \sim p_{data}(x)}[\log D(x)] + E_{z \sim p_{z}(z)}[\log(1-D(G(z)))]$</p> 
+                <p class="toRender" align="center">$V(D,G) = E_{x \sim p_{data}(x)}[\log D(x)] + E_{z \sim p_{z}(z)}[\log(1-D(G(z)))]$</p> 
                 <p class="toRender">
                 In this case, $x$ is a sample of the real data distribution ($p_{data}$), and $z$ is usually noise drawn from a known distribution ($p_z$) easy to sample from (Gaussian or uniform). When training is succesfull, $G$ will have learned to map any noise sample $z$ to "real-looking" samples $G(z)$.
                 </p>
                 <p class="toRender">
                 In our case however, our generator could be the decoder from our <i>seq2seq</i> model, and would therefore learn to map sentence encodings to real data samples. This would yield that $z$ from the GAN formulation would be replaced by $Enc_G(Q)$ where $Enc_G$ is the encoding function of the <i>seq2seq</i>. Our discriminator, in order to judge asnwers according to the questions and not just as real-looking samples, should  also be conditioned on $Q$. In this case a possible strategy would be to provide the discriminator another sentence encoder $Enc_D$ in order to provide a fixed sentence representation to an  RNN performing per time-steps predictions on either real answers our fake ones produced by $G$. This way, the discriminator RNN could output predictions, on each timestep, with respect to (1) its previous state and (2) the global representation of $Q$, producing direct learning signals for the generator at every timestep. Our minimax game value would then look like this :
-                    <p class="toRender" align="left">$V(D,G) = E_{Q \sim p_{data}(Q)}[\log D(A|Q)]$</p>
+                    </p><p class="toRender" align="left">$V(D,G) = E_{Q \sim p_{data}(Q)}[\log D(A|Q)]$</p>
                     <p class="toRender" align="right">$ + E_{Q \sim p_{data}(Q)}[\log(1-D(G(Enc_G(Q))))]$</p> 
-                </p>    
+                <p></p>    
                 <p>
                     <b><small>Discrete outputs and REINFORCE Algorithm</small></b>
                 </p>
@@ -372,26 +372,26 @@ function renderLoading(figure) {
                         <h4>Cornell Movie Dialog Corpus</h4>
                             <p>This dataset contains movie conversations extracted from scripts of 617 movies, between more than 10 000 caracters. We extract first Q/A pairs of each conversation and retrieve more than 120 000 samples. We apply 2 preprocessing strategies in order to extract the 8000 most common words, or our arbitrary vocabulary of 55 characters. Most sentences contain common, well written words and we therefore consider this as our <i>clean</i> dataset.</p>
                         <h4>Messenger Conversations</h4>
-                            <p>As it is possible for one to retrieve his/her own Facebook conversations' history, the authors wanted to experiment with this data and find out if a trained <i>seq2seq</i> on this data could reflect one's style of written dialogue. However, some serious limitations of the data made it hard for a network to output answers strongly linked semanticaly to the input query. First, the data is limited, and unbalanced given different authors, as shown in the Table below : <img class="meme" src="images/MessengerStatsNoTrebble.png", width="650"> Secondly, as humans often do on Facebook, the authors do not always have a <i>clean</i> or proper spelling when on Facebook, compared to when writing more official documents, or compared with the movie dialogue corpus. Moreover, a network trained on the <i>clean</i> movie data, could not be used as a pre-trained model for Messenger as this dataset contains only english sentences, while authors are all french speakers. For these reasons, experiments done with these datasets were all done on a character-level encoders and decoders.</p>
+                            <p>As it is possible for one to retrieve his/her own Facebook conversations' history, the authors wanted to experiment with this data and find out if a trained <i>seq2seq</i> on this data could reflect one's style of written dialogue. However, some serious limitations of the data made it hard for a network to output answers strongly linked semanticaly to the input query. First, the data is limited, and unbalanced given different authors, as shown in the Table below : <img class="meme" src="images/MessengerStatsNoTrebble.png" ,="" width="650"> Secondly, as humans often do on Facebook, the authors do not always have a <i>clean</i> or proper spelling when on Facebook, compared to when writing more official documents, or compared with the movie dialogue corpus. Moreover, a network trained on the <i>clean</i> movie data, could not be used as a pre-trained model for Messenger as this dataset contains only english sentences, while authors are all french speakers. For these reasons, experiments done with these datasets were all done on a character-level encoders and decoders.</p>
                     <h3>Results</h3>
                         <h4>Cornell Movie Dialog Corpus</h4>
-                            <p><small><b>Char2Char, no attention</b></small><p>
-                            <p>Without Droupout, learning curves produced while training look like this for most models: 
-                            <img class="meme" src="images/char2char_noAtt.png", width="650"> 
+                            <p><small><b>Char2Char, no attention</b></small></p><p>
+                            </p><p>Without Droupout, learning curves produced while training look like this for most models: 
+                            <img class="meme" src="images/char2char_noAtt.png" ,="" width="650"> 
                             Each epoch consisted of 250 iterations in which a random minibatch is fed to the network. The labels present on the Figure are typical outputs of the network at different training phases. One common behavior in our experiments was the way networks started of being very boring on the validation set, and evovled to being somewhat entertaining on the validation set, despite having bigger loss. This is directly linked to the negative log-likelihood loss function. Therefore, overfitting in case where we aim at entertaining dialogues with little training data might not be a bad thing. Learning some answers, that are grammatically correct from the training set has at least the advantage of creating less abiguous answers than <i>"I don't know"</i> or <i>"Yes"</i>.</p>
-                            <p><small><b>Adding attention</b></small><p>
-                            <p><small><u>Word2Word</u></small><p>
-                            <p><small><u>Char2Char</u></small><p>
-                            <p><small><u>Word2Char</u></small><p>
-                        <h4>Messenger</h4>
-                        <p><small><b>Capturing Styles</b></small><p>
-                        <p><small><b>Interactive ChatBot</b></small><p>
+                            <p><small><b>Adding attention</b></small></p><p>
+                            </p><p><small><u>Word2Word</u></small></p><p>
+                            </p><p><small><u>Char2Char</u></small></p><p>
+                            </p><p><small><u>Word2Char</u></small></p><p>
+                        </p><h4>Messenger</h4>
+                        <p><small><b>Capturing Styles</b></small></p><p>
+                        </p><p><small><b>Interactive ChatBot</b></small></p><p>
             
-        </dt-article>
+        
         <dt-appendix class="centered">
-            <h3>Acknowledgments</h3>
+            </dt-appendix></p><h3>Acknowledgments</h3>
             <p>Thank you</p>
-        </dt-appendix>
+        
         <script type="text/javascript">
         var el = document.getElementsByClassName("toRender")
         for (var i = 0; i < el.length; i++) {
@@ -487,4 +487,5 @@ Networks}, volume={2}, pages={359--366}, year={1989}}
 }
         </script>
 
-</body></html>
+
+</dt-article></body></html>
