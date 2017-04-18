@@ -62,6 +62,11 @@ function renderLoading(figure) {
 }
 </script>
 
+<style>
+#previews figcaption {
+  text-align: center;
+}
+</style>
 
 
     </head><body>
@@ -364,7 +369,7 @@ function renderLoading(figure) {
                 </p>        
                 <h2>Experiments and results</h2>
                     <h3>Network Architectures</h3>
-                        <p>We performed experiments with multiple variants of the sequence-to-sequence architecture described above. As sequence to sequence model offer loosely coupled encoder and decoder networks, one can easily change input or output data formats without changing the architecture. Of course, re-training is then needed. In our case, we experimented with different language abstraction levels for both the encoder and decoder. We compared word-level and charcater-level (char-level) representations of sentences as input or ouput formats. We experimented with 3 variants: <i>word2word</i>, <i>word2char</i>, and <i>char2char</i>, where for example <i>word2char</i> represents a word-level encoder coupled with a char-level decoder.</p>
+                        <p>We performed experiments with multiple variants of the sequence-to-sequence architecture described above. As sequence to sequence model offer loosely coupled encoder and decoder networks, one can easily change input or output data formats without changing the architecture. Of course, re-training is then needed. In our case, we experimented with different language abstraction levels for both the encoder and decoder. We compared word-level and charcater-level representations of sentences as input or ouput formats. We experimented with 3 variants: <i>word2word</i>, <i>word2char</i>, and <i>char2char</i>, where for example <i>word2char</i> represents a word-level encoder coupled with a char-level decoder.</p>
                         <p>In all cases, for encoder and decoder networks, we used 3 stacked GRU hidden layers of each 256 cells. Feed-forward dropout, when applied, was used with a probability of 0.25 of dropping units, and the Adam optimizer was used to minimize the negative log-likelihood. All experiments were ran on NVIDIA GeForce 960M GPUs.</p>
                     <h3>Data</h3> 
                         <p>We focused our empirical study on a movie-dialogue dataset, while experimenting also on some custom dataset of Facebook Messenger conversations, retrieved from the author's own history of conversations.</p>
@@ -376,15 +381,41 @@ function renderLoading(figure) {
                         <h4>Cornell Movie Dialog Corpus</h4>
                             <p><small><b>Char2Char, no attention, no dropout</b></small></p>
                             <p>Without Droupout, learning curves produced while training look like this for most models: 
-                            <img class="meme" src="images/char2char_noAtt.png" ,="" width="650"> 
+                            </p><p><figure>
+                                 <img class="meme" src="images/char2char_noAtt.png" ,="" width="650">
+                                <figcaption style="text-align: center; bottom: 0px;">Learning curves for the word2word architecture.</figcaption>
+                              </figure></p><p>
                             Each epoch consisted of 250 iterations in which a random minibatch is fed to the network. The labels present on the Figure are typical outputs of the network at different training phases. One common behavior in our experiments was the way networks started of being very boring on the validation set, and evovled to being somewhat entertaining on the validation set, despite having bigger loss. This is directly linked to the negative log-likelihood loss function. Therefore, overfitting in case where we aim at entertaining dialogues with little training data might not be a bad thing. Learning some answers, that are grammatically correct from the training set has at least the advantage of creating less abiguous answers than <i>"I don't know"</i> or <i>"Yes"</i>.</p>
                             <p><small><b>Adding attention and dropout.</b></small></p>
-                            <p>In order to improve quality of generated answers, we added the attention mechanism described above, so that it can be easier for the network to use specific words from the question query as conditioning information. Also, we added feed-froward dropout in order to help generalization of the model.</p>
+                            <p>In order to improve quality of generated answers, we added the attention mechanism described above, so that it can be easier for the network to use specific words from the question query as conditioning information. Also, we added feed-froward dropout in order to help generalization of the model. We list here training curves and sample answers for fixed, custom questions for different models, and discuss these results in the Discussion section. When using word-level decoders, we used the <i>sample softmax</i> as described above.</p>
                             <p><small><u>Word2Word</u></small></p>
-                            <p> <img class="meme" src="images/curves_word2word.png" , width="650"> </p>
+                            <p></p>
+                              <figure>
+                                <img src="images/curves_word2word.png", width="650">
+                                <figcaption style="text-align: center;">Learning curves for the <i>word2word</i> architecture with attention.</figcaption>
+                              </figure><p></p>
+                              <figure>
+                                <center><img src="images/samples_w2w.png", style="width: 90%; height: 90%; align: center;"></center>
+                                <figcaption style="text-align: center;">Samples for the <i>word2word</i> architecture with attention.</figcaption>
+                              </figure><p></p>
                             <p><small><u>Char2Char</u></small></p>
-                            <p> <img class="meme" src="images/curves_char2char_Att_Drop.png" ,="" width="650"> </p>
+                            <p><figure>
+                                 <img class="meme" src="images/curves_char2char_Att_Drop.png" ,="" width="650">
+                                <figcaption style="text-align: center; bottom: 0px;", text-align: center>Learning curves for the <i>char2char</i> architecture with attention.</figcaption>
+                              </figure></p>
+                              <figure>
+                                  <center><img src="images/samples_c2c.png", style="width: 75%; height: 75%; align: center;"></center>
+                                <figcaption style="text-align: center;">Samples for the <i>word2word</i> architecture with attention.</figcaption>
+                              </figure><p></p>
                             <p><small><u>Word2Char</u></small></p>
+                            <p><figure>
+                                 <img class="meme" src="images/curves_word2char_att_drop.png" ,="" width="650">
+                                <figcaption style="text-align: center; bottom: 0px;", text-align: center>Learning curves for the <i>word2char</i> architecture with attention.</figcaption>
+                              </figure></p>
+                              <figure>
+                                  <center><img src="images/samples_w2c.png", style="width: 75%; height: 75%; align: center;"></center>
+                                <figcaption style="text-align: center;">Samples for the <i>word2char</i> architecture with attention.</figcaption>
+                              </figure><p></p>
                             <p><h4>Messenger</h4></p>
                         <p><small><b>Capturing Styles</b></small></p>
                         <p><small><b>Interactive ChatBot</b></small></p>
