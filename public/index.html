@@ -361,13 +361,12 @@ function renderLoading(figure) {
                 </p>
                 <p class="toRender">
                 Luckily, methods from the field reinforcement learning offer ways to learn from reward signals despite the choice of discrete actions. Specifically, if we consider the $softmax$ output of $G$ as being a policy $\pi$ for  discrete actions (word or char tokens) given the state ($S_t$, given by the hidden state of the decoder), on could frame this problem as a reinforcement learning one, en employ a policy-gradient technique, such as the REINFORCE algorithm<dt-cite key="williams1992simple"> </dt-cite>. This approach have been applied succesfully to text generation <dt-cite key="yu2016seqgan"> </dt-cite>. In our case however, using an RNN discriminator, outputing rewards at each timestep could potentialy remove the need for Monte-Carlo search, as we could trivialy compute real, complete returns as sums of reward from each $t \in T^{'}$. Moreover, adding conditioning on the question representation would allow for <i>answer</i> generation instead of basic text generation.   
-                </p>
-                
+                </p>        
                 <h2>Experiments and results</h2>
                     <h3>Network Architectures</h3>
                         <p>We performed experiments with multiple variants of the sequence-to-sequence architecture described above. As sequence to sequence model offer loosely coupled encoder and decoder networks, one can easily change input or output data formats without changing the architecture. Of course, re-training is then needed. In our case, we experimented with different language abstraction levels for both the encoder and decoder. We compared word-level and charcater-level (char-level) representations of sentences as input or ouput formats. We experimented with 3 variants: <i>word2word</i>, <i>word2char</i>, and <i>char2char</i>, where for example <i>word2char</i> represents a word-level encoder coupled with a char-level decoder.</p>
-                        <p>In all cases, for encoder and decoder networks, we used 3 stacked GRU hidden layers of each 256 cells. Feed-forward dropout was applied with a probability of 0.25, and the Adam optimizer was used to minimize the negative log-likelihood.</p>
-                    <h3>Data</h3>
+                        <p>In all cases, for encoder and decoder networks, we used 3 stacked GRU hidden layers of each 256 cells. Feed-forward dropout, when applied, was used with a probability of 0.25 of dropping units, and the Adam optimizer was used to minimize the negative log-likelihood. All experiments were ran on NVIDIA GeForce 960M GPUs.</p>
+                    <h3>Data</h3> 
                         <p>We focused our empirical study on a movie-dialogue dataset, while experimenting also on some custom dataset of Facebook Messenger conversations, retrieved from the author's own history of conversations.</p>
                         <h4>Cornell Movie Dialog Corpus</h4>
                             <p>This dataset contains movie conversations extracted from scripts of 617 movies, between more than 10 000 caracters. We extract first Q/A pairs of each conversation and retrieve more than 120 000 samples. We apply 2 preprocessing strategies in order to extract the 8000 most common words, or our arbitrary vocabulary of 55 characters. Most sentences contain common, well written words and we therefore consider this as our <i>clean</i> dataset.</p>
@@ -375,17 +374,20 @@ function renderLoading(figure) {
                             <p>As it is possible for one to retrieve his/her own Facebook conversations' history, the authors wanted to experiment with this data and find out if a trained <i>seq2seq</i> on this data could reflect one's style of written dialogue. However, some serious limitations of the data made it hard for a network to output answers strongly linked semanticaly to the input query. First, the data is limited, and unbalanced given different authors, as shown in the Table below : <img class="meme" src="images/MessengerStatsNoTrebble.png" ,="" width="650"> Secondly, as humans often do on Facebook, the authors do not always have a <i>clean</i> or proper spelling when on Facebook, compared to when writing more official documents, or compared with the movie dialogue corpus. Moreover, a network trained on the <i>clean</i> movie data, could not be used as a pre-trained model for Messenger as this dataset contains only english sentences, while authors are all french speakers. For these reasons, experiments done with these datasets were all done on a character-level encoders and decoders.</p>
                     <h3>Results</h3>
                         <h4>Cornell Movie Dialog Corpus</h4>
-                            <p><small><b>Char2Char, no attention</b></small></p><p>
-                            </p><p>Without Droupout, learning curves produced while training look like this for most models: 
+                            <p><small><b>Char2Char, no attention, no dropout</b></small></p>
+                            <p>Without Droupout, learning curves produced while training look like this for most models: 
                             <img class="meme" src="images/char2char_noAtt.png" ,="" width="650"> 
                             Each epoch consisted of 250 iterations in which a random minibatch is fed to the network. The labels present on the Figure are typical outputs of the network at different training phases. One common behavior in our experiments was the way networks started of being very boring on the validation set, and evovled to being somewhat entertaining on the validation set, despite having bigger loss. This is directly linked to the negative log-likelihood loss function. Therefore, overfitting in case where we aim at entertaining dialogues with little training data might not be a bad thing. Learning some answers, that are grammatically correct from the training set has at least the advantage of creating less abiguous answers than <i>"I don't know"</i> or <i>"Yes"</i>.</p>
-                            <p><small><b>Adding attention</b></small></p><p>
-                            </p><p><small><u>Word2Word</u></small></p><p>
-                            </p><p><small><u>Char2Char</u></small></p><p>
-                            </p><p><small><u>Word2Char</u></small></p><p>
-                        </p><h4>Messenger</h4>
-                        <p><small><b>Capturing Styles</b></small></p><p>
-                        </p><p><small><b>Interactive ChatBot</b></small></p><p>
+                            <p><small><b>Adding attention and dropout.</b></small></p>
+                            <p>In order to improve quality of generated answers, we added the attention mechanism described above, so that it can be easier for the network to use specific words from the question query as conditioning information. Also, we added feed-froward dropout in order to help generalization of the model.</p>
+                            <p><small><u>Word2Word</u></small></p>
+                            <p> <img class="meme" src="images/curves_word2word.png" , width="650"> </p>
+                            <p><small><u>Char2Char</u></small></p>
+                            <p> <img class="meme" src="images/curves_char2char_Att_Drop.png" ,="" width="650"> </p>
+                            <p><small><u>Word2Char</u></small></p>
+                            <p><h4>Messenger</h4></p>
+                        <p><small><b>Capturing Styles</b></small></p>
+                        <p><small><b>Interactive ChatBot</b></small></p>
             
         
         <dt-appendix class="centered">
